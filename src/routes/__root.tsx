@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "../lib/auth-context";
+import { ThemeProvider } from "../lib/theme-context";
 import { Toaster } from "../components/ui/sonner";
 
 function NotFoundComponent() {
@@ -68,9 +69,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="es" className="dark">
+    <html lang="es">
       <head><HeadContent /></head>
-      <body>{children}<Scripts /></body>
+      <body className="bg-background text-foreground">{children}<Scripts /></body>
     </html>
   );
 }
