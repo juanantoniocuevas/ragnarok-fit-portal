@@ -37,7 +37,7 @@ function DashboardLayout() {
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <Link to="/dashboard"><Logo className="h-11 w-auto" /></Link>
+          <Link to="/dashboard"><Logo className="h-16 w-auto" /></Link>
           <div className="flex items-center gap-3">
             <ThemeToggle />
             <button onClick={() => signOut().then(() => navigate({ to: "/" }))} className="btn-secondary text-sm">

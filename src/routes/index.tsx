@@ -136,7 +136,7 @@ function Landing() {
       </section>
 
       <footer className="border-t border-border py-8 text-center text-sm text-muted-foreground">
-        <Logo className="mx-auto mb-3 h-10 w-auto" />
+        <Logo className="mx-auto mb-3 h-16 w-auto" />
         © {new Date().getFullYear()} Ragnarok Fit. Todos los derechos reservados.
       </footer>
     </div>
