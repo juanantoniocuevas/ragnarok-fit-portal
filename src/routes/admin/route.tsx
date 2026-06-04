@@ -46,7 +46,7 @@ function AdminLayout() {
             {links.map((l) => {
               const active = path.startsWith(l.to);
               return (
-                <Link key={l.to} to={l.to} className={`flex min-h-12 items-center whitespace-nowrap rounded-md px-4 text-sm font-medium ${active ? "bg-gold text-[#0A0A0A]" : "text-muted-foreground hover:text-gold"}`}>
+                <Link key={l.to} to={l.to} className={`flex min-h-12 items-center whitespace-nowrap rounded-md px-4 text-sm font-medium ${active ? "bg-gold text-background" : "text-muted-foreground hover:text-gold"}`}>
                   <l.icon className="mr-2 h-4 w-4" />{l.label}
                 </Link>
               );
