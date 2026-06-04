@@ -9,38 +9,219 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
+import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as DashboardRecommendationsRouteImport } from './routes/dashboard/recommendations'
+import { Route as DashboardProgressRouteImport } from './routes/dashboard/progress'
+import { Route as DashboardContactRouteImport } from './routes/dashboard/contact'
+import { Route as DashboardClassesRouteImport } from './routes/dashboard/classes'
+import { Route as AdminRecommendationsRouteImport } from './routes/admin/recommendations'
+import { Route as AdminEvaluationsRouteImport } from './routes/admin/evaluations'
+import { Route as AdminClientsRouteImport } from './routes/admin/clients'
+import { Route as AdminAttendanceRouteImport } from './routes/admin/attendance'
 
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRouteRoute = DashboardRouteRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const DashboardRecommendationsRoute =
+  DashboardRecommendationsRouteImport.update({
+    id: '/recommendations',
+    path: '/recommendations',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
+const DashboardProgressRoute = DashboardProgressRouteImport.update({
+  id: '/progress',
+  path: '/progress',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardContactRoute = DashboardContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardClassesRoute = DashboardClassesRouteImport.update({
+  id: '/classes',
+  path: '/classes',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const AdminRecommendationsRoute = AdminRecommendationsRouteImport.update({
+  id: '/recommendations',
+  path: '/recommendations',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminEvaluationsRoute = AdminEvaluationsRouteImport.update({
+  id: '/evaluations',
+  path: '/evaluations',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminClientsRoute = AdminClientsRouteImport.update({
+  id: '/clients',
+  path: '/clients',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAttendanceRoute = AdminAttendanceRouteImport.update({
+  id: '/attendance',
+  path: '/attendance',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
+  '/dashboard': typeof DashboardRouteRouteWithChildren
+  '/login': typeof LoginRoute
+  '/admin/attendance': typeof AdminAttendanceRoute
+  '/admin/clients': typeof AdminClientsRoute
+  '/admin/evaluations': typeof AdminEvaluationsRoute
+  '/admin/recommendations': typeof AdminRecommendationsRoute
+  '/dashboard/classes': typeof DashboardClassesRoute
+  '/dashboard/contact': typeof DashboardContactRoute
+  '/dashboard/progress': typeof DashboardProgressRoute
+  '/dashboard/recommendations': typeof DashboardRecommendationsRoute
+  '/admin/': typeof AdminIndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/admin/attendance': typeof AdminAttendanceRoute
+  '/admin/clients': typeof AdminClientsRoute
+  '/admin/evaluations': typeof AdminEvaluationsRoute
+  '/admin/recommendations': typeof AdminRecommendationsRoute
+  '/dashboard/classes': typeof DashboardClassesRoute
+  '/dashboard/contact': typeof DashboardContactRoute
+  '/dashboard/progress': typeof DashboardProgressRoute
+  '/dashboard/recommendations': typeof DashboardRecommendationsRoute
+  '/admin': typeof AdminIndexRoute
+  '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
+  '/dashboard': typeof DashboardRouteRouteWithChildren
+  '/login': typeof LoginRoute
+  '/admin/attendance': typeof AdminAttendanceRoute
+  '/admin/clients': typeof AdminClientsRoute
+  '/admin/evaluations': typeof AdminEvaluationsRoute
+  '/admin/recommendations': typeof AdminRecommendationsRoute
+  '/dashboard/classes': typeof DashboardClassesRoute
+  '/dashboard/contact': typeof DashboardContactRoute
+  '/dashboard/progress': typeof DashboardProgressRoute
+  '/dashboard/recommendations': typeof DashboardRecommendationsRoute
+  '/admin/': typeof AdminIndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/dashboard'
+    | '/login'
+    | '/admin/attendance'
+    | '/admin/clients'
+    | '/admin/evaluations'
+    | '/admin/recommendations'
+    | '/dashboard/classes'
+    | '/dashboard/contact'
+    | '/dashboard/progress'
+    | '/dashboard/recommendations'
+    | '/admin/'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/login'
+    | '/admin/attendance'
+    | '/admin/clients'
+    | '/admin/evaluations'
+    | '/admin/recommendations'
+    | '/dashboard/classes'
+    | '/dashboard/contact'
+    | '/dashboard/progress'
+    | '/dashboard/recommendations'
+    | '/admin'
+    | '/dashboard'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/dashboard'
+    | '/login'
+    | '/admin/attendance'
+    | '/admin/clients'
+    | '/admin/evaluations'
+    | '/admin/recommendations'
+    | '/dashboard/classes'
+    | '/dashboard/contact'
+    | '/dashboard/progress'
+    | '/dashboard/recommendations'
+    | '/admin/'
+    | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
+  DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +229,125 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/dashboard/recommendations': {
+      id: '/dashboard/recommendations'
+      path: '/recommendations'
+      fullPath: '/dashboard/recommendations'
+      preLoaderRoute: typeof DashboardRecommendationsRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/progress': {
+      id: '/dashboard/progress'
+      path: '/progress'
+      fullPath: '/dashboard/progress'
+      preLoaderRoute: typeof DashboardProgressRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/contact': {
+      id: '/dashboard/contact'
+      path: '/contact'
+      fullPath: '/dashboard/contact'
+      preLoaderRoute: typeof DashboardContactRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/classes': {
+      id: '/dashboard/classes'
+      path: '/classes'
+      fullPath: '/dashboard/classes'
+      preLoaderRoute: typeof DashboardClassesRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/admin/recommendations': {
+      id: '/admin/recommendations'
+      path: '/recommendations'
+      fullPath: '/admin/recommendations'
+      preLoaderRoute: typeof AdminRecommendationsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/evaluations': {
+      id: '/admin/evaluations'
+      path: '/evaluations'
+      fullPath: '/admin/evaluations'
+      preLoaderRoute: typeof AdminEvaluationsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/clients': {
+      id: '/admin/clients'
+      path: '/clients'
+      fullPath: '/admin/clients'
+      preLoaderRoute: typeof AdminClientsRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/attendance': {
+      id: '/admin/attendance'
+      path: '/attendance'
+      fullPath: '/admin/attendance'
+      preLoaderRoute: typeof AdminAttendanceRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
   }
 }
 
+interface AdminRouteRouteChildren {
+  AdminAttendanceRoute: typeof AdminAttendanceRoute
+  AdminClientsRoute: typeof AdminClientsRoute
+  AdminEvaluationsRoute: typeof AdminEvaluationsRoute
+  AdminRecommendationsRoute: typeof AdminRecommendationsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminAttendanceRoute: AdminAttendanceRoute,
+  AdminClientsRoute: AdminClientsRoute,
+  AdminEvaluationsRoute: AdminEvaluationsRoute,
+  AdminRecommendationsRoute: AdminRecommendationsRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
+)
+
+interface DashboardRouteRouteChildren {
+  DashboardClassesRoute: typeof DashboardClassesRoute
+  DashboardContactRoute: typeof DashboardContactRoute
+  DashboardProgressRoute: typeof DashboardProgressRoute
+  DashboardRecommendationsRoute: typeof DashboardRecommendationsRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+}
+
+const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
+  DashboardClassesRoute: DashboardClassesRoute,
+  DashboardContactRoute: DashboardContactRoute,
+  DashboardProgressRoute: DashboardProgressRoute,
+  DashboardRecommendationsRoute: DashboardRecommendationsRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+}
+
+const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
+  DashboardRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
+  DashboardRouteRoute: DashboardRouteRouteWithChildren,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
