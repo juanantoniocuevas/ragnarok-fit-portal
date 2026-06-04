@@ -14,16 +14,165 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      attendance: {
+        Row: {
+          client_id: string
+          created_at: string
+          date: string
+          id: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          date: string
+          id?: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          date?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      evaluations: {
+        Row: {
+          body_fat: number | null
+          client_id: string
+          created_at: string
+          date: string
+          id: string
+          muscle_mass: number | null
+          notes: string | null
+          weight: number | null
+        }
+        Insert: {
+          body_fat?: number | null
+          client_id: string
+          created_at?: string
+          date: string
+          id?: string
+          muscle_mass?: number | null
+          notes?: string | null
+          weight?: number | null
+        }
+        Update: {
+          body_fat?: number | null
+          client_id?: string
+          created_at?: string
+          date?: string
+          id?: string
+          muscle_mass?: number | null
+          notes?: string | null
+          weight?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evaluations_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          is_active: boolean
+          phone: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name: string
+          id: string
+          is_active?: boolean
+          phone?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          is_active?: boolean
+          phone?: string | null
+        }
+        Relationships: []
+      }
+      recommendations: {
+        Row: {
+          client_id: string
+          content: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          client_id: string
+          content: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          client_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recommendations_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "trainer" | "client"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +299,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["trainer", "client"],
+    },
   },
 } as const
