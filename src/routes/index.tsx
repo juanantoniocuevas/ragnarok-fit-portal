@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Logo } from "@/components/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Activity, Heart, Shield, Sparkles, Users, MessageCircle, ClipboardCheck, TrendingUp } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -20,6 +21,7 @@ function Landing() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
           <Logo className="h-12 w-auto" />
           <nav className="flex items-center gap-3">
+            <ThemeToggle />
             <Link to="/login" className="btn-secondary text-sm">Mi Cuenta</Link>
           </nav>
         </div>

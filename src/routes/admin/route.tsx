@@ -2,6 +2,7 @@ import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tan
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { Logo } from "@/components/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Users, ClipboardList, CalendarCheck, MessageSquare, LogOut } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({ ssr: false, component: AdminLayout });
@@ -34,6 +35,7 @@ function AdminLayout() {
           <Link to="/admin/clients"><Logo className="h-11 w-auto" /></Link>
           <div className="flex items-center gap-3">
             <span className="hidden text-sm text-muted-foreground md:inline">Panel del Entrenador</span>
+            <ThemeToggle />
             <button onClick={() => signOut().then(() => navigate({ to: "/" }))} className="btn-secondary text-sm">
               <LogOut className="mr-2 h-4 w-4" /> Salir
             </button>
@@ -44,7 +46,7 @@ function AdminLayout() {
             {links.map((l) => {
               const active = path.startsWith(l.to);
               return (
-                <Link key={l.to} to={l.to} className={`flex min-h-12 items-center whitespace-nowrap rounded-md px-4 text-sm font-medium ${active ? "bg-gold text-background" : "text-muted-foreground hover:text-gold"}`}>
+                <Link key={l.to} to={l.to} className={`flex min-h-12 items-center whitespace-nowrap rounded-md px-4 text-sm font-medium ${active ? "bg-gold text-[#0A0A0A]" : "text-muted-foreground hover:text-gold"}`}>
                   <l.icon className="mr-2 h-4 w-4" />{l.label}
                 </Link>
               );
