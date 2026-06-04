@@ -2,6 +2,7 @@ import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tan
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { Logo } from "@/components/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { LayoutDashboard, TrendingUp, CalendarCheck, MessageSquare, Phone, LogOut } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard")({
@@ -37,9 +38,12 @@ function DashboardLayout() {
       <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
           <Link to="/dashboard"><Logo className="h-11 w-auto" /></Link>
-          <button onClick={() => signOut().then(() => navigate({ to: "/" }))} className="btn-secondary text-sm">
-            <LogOut className="mr-2 h-4 w-4" /> Salir
-          </button>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <button onClick={() => signOut().then(() => navigate({ to: "/" }))} className="btn-secondary text-sm">
+              <LogOut className="mr-2 h-4 w-4" /> Salir
+            </button>
+          </div>
         </div>
         <nav className="mx-auto max-w-6xl overflow-x-auto px-2">
           <div className="flex gap-1 pb-2">

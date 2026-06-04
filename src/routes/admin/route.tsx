@@ -2,6 +2,7 @@ import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tan
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { Logo } from "@/components/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Users, ClipboardList, CalendarCheck, MessageSquare, LogOut } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({ ssr: false, component: AdminLayout });
@@ -34,6 +35,7 @@ function AdminLayout() {
           <Link to="/admin/clients"><Logo className="h-11 w-auto" /></Link>
           <div className="flex items-center gap-3">
             <span className="hidden text-sm text-muted-foreground md:inline">Panel del Entrenador</span>
+            <ThemeToggle />
             <button onClick={() => signOut().then(() => navigate({ to: "/" }))} className="btn-secondary text-sm">
               <LogOut className="mr-2 h-4 w-4" /> Salir
             </button>
