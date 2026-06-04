@@ -32,7 +32,7 @@ function AdminLayout() {
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <Link to="/admin/clients"><Logo className="h-11 w-auto" /></Link>
+          <Link to="/admin/clients"><Logo className="h-16 w-auto" /></Link>
           <div className="flex items-center gap-3">
             <span className="hidden text-sm text-muted-foreground md:inline">Panel del Entrenador</span>
             <ThemeToggle />
@@ -46,7 +46,7 @@ function AdminLayout() {
             {links.map((l) => {
               const active = path.startsWith(l.to);
               return (
-                <Link key={l.to} to={l.to} className={`flex min-h-12 items-center whitespace-nowrap rounded-md px-4 text-sm font-medium ${active ? "bg-gold text-[#0A0A0A]" : "text-muted-foreground hover:text-gold"}`}>
+                <Link key={l.to} to={l.to} className={`flex min-h-12 items-center whitespace-nowrap rounded-md px-4 text-sm font-medium ${active ? "bg-gold text-background" : "text-muted-foreground hover:text-gold"}`}>
                   <l.icon className="mr-2 h-4 w-4" />{l.label}
                 </Link>
               );

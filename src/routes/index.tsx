@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import heroBg from "@/assets/hero-warriors.png.asset.json";
 import { Activity, Heart, Shield, Sparkles, Users, MessageCircle, ClipboardCheck, TrendingUp } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -19,7 +20,7 @@ function Landing() {
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <Logo className="h-12 w-auto" />
+          <Logo className="h-16 w-auto md:h-20" />
           <nav className="flex items-center gap-3">
             <ThemeToggle />
             <Link to="/login" className="btn-secondary text-sm">Mi Cuenta</Link>
@@ -29,14 +30,21 @@ function Landing() {
 
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_color-mix(in_oklab,var(--color-gold)_15%,transparent),_transparent_60%)]" />
-        <div className="relative mx-auto max-w-5xl px-4 py-24 text-center">
-          <Logo className="mx-auto mb-8 h-32 w-auto md:h-44" />
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${heroBg.url})` }}
+          aria-hidden
+        />
+        {/* Dark mode: darken image for white text legibility */}
+        <div className="absolute inset-0 bg-background/70 dark:bg-background/75" aria-hidden />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_color-mix(in_oklab,var(--color-gold)_18%,transparent),_transparent_65%)]" aria-hidden />
+        <div className="relative mx-auto max-w-5xl px-4 py-28 text-center md:py-36">
+          <Logo className="mx-auto mb-10 h-48 w-auto md:h-64 lg:h-72 drop-shadow-2xl" />
           <h1 className="font-display text-4xl font-bold leading-tight md:text-6xl">
             Entrena como un guerrero.<br />
             <span className="text-gold">Vive más tiempo.</span>
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-foreground/80">
             Ragnarok Fit — acompañamiento personalizado para mejorar tu salud, movilidad y calidad de vida.
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-4">
@@ -128,7 +136,7 @@ function Landing() {
       </section>
 
       <footer className="border-t border-border py-8 text-center text-sm text-muted-foreground">
-        <Logo className="mx-auto mb-3 h-10 w-auto" />
+        <Logo className="mx-auto mb-3 h-16 w-auto" />
         © {new Date().getFullYear()} Ragnarok Fit. Todos los derechos reservados.
       </footer>
     </div>

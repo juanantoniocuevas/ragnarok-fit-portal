@@ -39,7 +39,7 @@ function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="w-full max-w-md">
         <Link to="/" className="mb-8 flex justify-center">
-          <Logo className="h-20 w-auto" />
+          <Logo className="h-32 w-auto md:h-40" />
         </Link>
         <div className="surface-card p-8">
           <h1 className="font-display text-2xl font-bold">Ingresar a Mi Cuenta</h1>
