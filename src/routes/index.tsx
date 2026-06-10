@@ -149,9 +149,12 @@ function Landing() {
       </section>
 
       {/* Contact */}
-      <section className="mx-auto max-w-3xl px-4 py-20 text-center">
-        <h2 className="font-display text-3xl font-bold md:text-4xl">Habla con Nosotros</h2>
-        <p className="mt-3 text-muted-foreground">¿Listo para comenzar? Escríbenos directamente.</p>
+      <section className="mx-auto max-w-3xl px-4 py-24 text-center">
+        <p className="eyebrow">Contacto</p>
+        <h2 className="mt-2 font-display text-4xl uppercase tracking-wide md:text-5xl">
+          Habla con <span className="text-gold">Nosotros</span>
+        </h2>
+        <p className="mt-3 font-body text-lg italic text-muted-foreground">¿Listo para comenzar? Escríbenos directamente.</p>
         <div className="mt-8 flex flex-wrap justify-center gap-4">
           <a href="https://wa.me/56912345678" target="_blank" rel="noreferrer" className="btn-primary">
             <MessageCircle className="mr-2 h-5 w-5" /> WhatsApp
