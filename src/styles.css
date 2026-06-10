@@ -39,7 +39,9 @@
   --color-rust: var(--rust);
   --color-vitality: var(--vitality);
 
-  --font-display: "Cinzel", serif;
+  --font-display: "Pirata One", "Cinzel", serif;
+  --font-serif: "Cinzel", "Cormorant Garamond", serif;
+  --font-body: "Cormorant Garamond", Georgia, serif;
   --font-sans: "Inter", system-ui, sans-serif;
 }
 
