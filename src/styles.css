@@ -130,37 +130,36 @@
 }
 
 @layer base {
-  * {
-    border-color: var(--color-border);
-  }
+  * { border-color: var(--color-border); }
   html, body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family: var(--font-sans);
-    font-size: 16px;
+    font-family: var(--font-body);
+    font-size: 17px;
     -webkit-font-smoothing: antialiased;
   }
-  h1, h2, h3, .font-display {
-    font-family: var(--font-display);
-    letter-spacing: 0.01em;
+  h1, h2, h3, h4, .font-display {
+    font-family: var(--font-serif);
+    letter-spacing: 0.02em;
+    font-weight: 600;
   }
-  ::selection {
-    background: var(--color-gold);
-    color: var(--color-background);
-  }
+  .font-rune { font-family: var(--font-display); letter-spacing: 0.04em; }
+  ::selection { background: var(--color-gold); color: var(--color-background); }
 }
 
 @layer components {
   .btn-primary {
     background-color: var(--color-gold);
     color: var(--color-background);
+    font-family: var(--font-serif);
     font-weight: 600;
-    border-radius: 0.5rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    border-radius: 0.25rem;
     min-height: 48px;
-    padding: 0 1.25rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    padding: 0 1.5rem;
+    display: inline-flex; align-items: center; justify-content: center;
     transition: background-color 0.2s ease, transform 0.15s ease;
   }
   .btn-primary:hover { background-color: var(--color-gold-hover); }
@@ -170,13 +169,15 @@
     background: transparent;
     color: var(--color-gold);
     border: 1.5px solid var(--color-gold);
+    font-family: var(--font-serif);
     font-weight: 600;
-    border-radius: 0.5rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    border-radius: 0.25rem;
     min-height: 48px;
-    padding: 0 1.25rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    padding: 0 1.5rem;
+    display: inline-flex; align-items: center; justify-content: center;
     transition: background-color 0.2s ease;
   }
   .btn-secondary:hover { background-color: color-mix(in oklab, var(--color-gold) 12%, transparent); }
@@ -184,15 +185,56 @@
   .surface-card {
     background-color: var(--color-navy);
     border: 1px solid var(--color-border);
-    border-radius: 0.75rem;
+    border-radius: 0.5rem;
   }
-  .surface-card-active {
-    border-left: 3px solid var(--color-gold);
+  .light .surface-card { background-color: var(--color-card); }
+  .surface-card-active { border-left: 3px solid var(--color-gold); }
+
+  .eyebrow {
+    font-family: var(--font-serif);
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    font-size: 0.7rem;
+    color: var(--color-gold);
   }
 
   .runic-divider {
-    height: 1px;
-    background-image: linear-gradient(to right, transparent, var(--color-gold) 20%, var(--color-gold) 80%, transparent);
-    opacity: 0.4;
+    height: 28px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 28' fill='none' stroke='%23e3a80b' stroke-width='1.2'><path d='M0 14 H70'/><path d='M170 14 H240'/><path d='M80 14 q6 -10 16 -10 t16 10 t16 10 t16 -10'/><circle cx='120' cy='14' r='3.5'/><path d='M105 14 l-6 -6 M135 14 l6 -6 M105 14 l-6 6 M135 14 l6 6'/></svg>");
+    background-repeat: no-repeat; background-position: center; background-size: contain;
+    opacity: 0.85;
+  }
+  .light .runic-divider {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 28' fill='none' stroke='%23193253' stroke-width='1.2'><path d='M0 14 H70'/><path d='M170 14 H240'/><path d='M80 14 q6 -10 16 -10 t16 10 t16 10 t16 -10'/><circle cx='120' cy='14' r='3.5'/><path d='M105 14 l-6 -6 M135 14 l6 -6 M105 14 l-6 6 M135 14 l6 6'/></svg>");
+  }
+
+  /* Norse knot texture — subtle decorative background */
+  .knot-pattern {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160' fill='none' stroke='%23193253' stroke-width='1.2' opacity='0.6'><circle cx='80' cy='80' r='44'/><circle cx='80' cy='80' r='32'/><circle cx='80' cy='80' r='20'/><path d='M80 36 q22 22 0 44 q-22 -22 0 -44 z'/><path d='M36 80 q22 22 44 0 q-22 -22 -44 0 z'/><path d='M80 124 q22 -22 0 -44 q-22 22 0 44 z'/><path d='M124 80 q-22 -22 -44 0 q22 22 44 0 z'/></svg>");
+    background-repeat: repeat;
+    background-size: 240px;
+  }
+  .light .knot-pattern {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160' fill='none' stroke='%23193253' stroke-width='1' opacity='0.25'><circle cx='80' cy='80' r='44'/><circle cx='80' cy='80' r='32'/><circle cx='80' cy='80' r='20'/><path d='M80 36 q22 22 0 44 q-22 -22 0 -44 z'/><path d='M36 80 q22 22 44 0 q-22 -22 -44 0 z'/><path d='M80 124 q22 -22 0 -44 q-22 22 0 44 z'/><path d='M124 80 q-22 -22 -44 0 q22 22 44 0 z'/></svg>");
+  }
+
+  /* Vertical gold braid (like brandbook gold columns) */
+  .braid-vertical {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='80' viewBox='0 0 40 80' fill='none' stroke='%23e3a80b' stroke-width='1.5'><path d='M10 0 Q30 20 10 40 Q30 60 10 80'/><path d='M30 0 Q10 20 30 40 Q10 60 30 80'/></svg>");
+    background-repeat: repeat-y; background-position: center; background-size: 40px 80px;
+  }
+  .light .braid-vertical {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='80' viewBox='0 0 40 80' fill='none' stroke='%23193253' stroke-width='1.5'><path d='M10 0 Q30 20 10 40 Q30 60 10 80'/><path d='M30 0 Q10 20 30 40 Q10 60 30 80'/></svg>");
+  }
+
+  /* Ink drips falling from the top of a section */
+  .drip-top { position: relative; }
+  .drip-top::before {
+    content: ""; position: absolute; inset: 0 0 auto 0; height: 36px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 36' preserveAspectRatio='none' fill='%23e3a80b'><path d='M0 0 H200 V8 Q190 14 180 8 Q175 24 170 8 Q160 18 150 8 Q145 30 140 8 Q130 16 120 8 Q115 28 110 8 Q100 14 90 8 Q85 32 80 8 Q70 18 60 8 Q55 26 50 8 Q40 16 30 8 Q25 28 20 8 Q10 14 0 8 Z'/></svg>");
+    background-size: 100% 100%; pointer-events: none;
+  }
+  .light .drip-top::before {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 36' preserveAspectRatio='none' fill='%23193253'><path d='M0 0 H200 V8 Q190 14 180 8 Q175 24 170 8 Q160 18 150 8 Q145 30 140 8 Q130 16 120 8 Q115 28 110 8 Q100 14 90 8 Q85 32 80 8 Q70 18 60 8 Q55 26 50 8 Q40 16 30 8 Q25 28 20 8 Q10 14 0 8 Z'/></svg>");
   }
 }
