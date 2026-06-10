@@ -29,22 +29,30 @@ function Landing() {
       </header>
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden drip-top">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${heroBg.url})` }}
           aria-hidden
         />
-        {/* Dark mode: darken image for white text legibility */}
-        <div className="absolute inset-0 bg-background/70 dark:bg-background/75" aria-hidden />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_color-mix(in_oklab,var(--color-gold)_18%,transparent),_transparent_65%)]" aria-hidden />
+        <div className="absolute inset-0 bg-background/80 dark:bg-background/85" aria-hidden />
+        <div className="absolute inset-0 knot-pattern opacity-30 dark:opacity-40" aria-hidden />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_color-mix(in_oklab,var(--color-gold)_15%,transparent),_transparent_65%)]" aria-hidden />
+
+        {/* Side gold braids — desktop only */}
+        <div className="braid-vertical absolute left-0 top-0 hidden h-full w-10 opacity-60 lg:block" aria-hidden />
+        <div className="braid-vertical absolute right-0 top-0 hidden h-full w-10 opacity-60 lg:block" aria-hidden />
+
         <div className="relative mx-auto max-w-5xl px-4 py-28 text-center md:py-36">
-          <Logo className="mx-auto mb-10 h-48 w-auto md:h-64 lg:h-72 drop-shadow-2xl" />
-          <h1 className="font-display text-4xl font-bold leading-tight md:text-6xl">
-            Entrena como un guerrero.<br />
-            <span className="text-gold">Vive más tiempo.</span>
+          <Logo className="mx-auto mb-8 h-44 w-auto md:h-60 lg:h-72 drop-shadow-2xl" />
+          <p className="eyebrow mb-4">Identidad · Disciplina · Legado</p>
+          <h1 className="font-rune text-5xl leading-none text-gold md:text-7xl lg:text-8xl">
+            Entrena como un guerrero.
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-foreground/80">
+          <h2 className="mt-4 font-display text-2xl uppercase tracking-[0.3em] text-foreground/90 md:text-3xl">
+            Vive más tiempo.
+          </h2>
+          <p className="mx-auto mt-8 max-w-2xl font-body text-lg italic text-foreground/85 md:text-xl">
             Ragnarok Fit — acompañamiento personalizado para mejorar tu salud, movilidad y calidad de vida.
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-4">
@@ -57,31 +65,42 @@ function Landing() {
       <div className="runic-divider mx-auto max-w-3xl" />
 
       {/* El Camino */}
-      <section id="camino" className="mx-auto max-w-6xl px-4 py-20">
-        <h2 className="text-center font-display text-3xl font-bold md:text-4xl">El Camino del Guerrero</h2>
-        <p className="mx-auto mt-3 max-w-xl text-center text-muted-foreground">Un proceso claro, guiado paso a paso.</p>
-        <div className="mt-12 grid gap-6 md:grid-cols-4">
-          {[
-            { n: "I", t: "Evaluación inicial", d: "Conocemos tu estado actual, objetivos y limitaciones." },
-            { n: "II", t: "Plan personalizado", d: "Diseñamos una ruta a tu medida." },
-            { n: "III", t: "Entrenamiento guiado", d: "Sesiones presenciales con supervisión profesional." },
-            { n: "IV", t: "Seguimiento continuo", d: "Revisión de progreso en tu portal personal." },
-          ].map((s) => (
-            <div key={s.n} className="surface-card surface-card-active p-6">
-              <div className="font-display text-3xl text-gold">{s.n}</div>
-              <h3 className="mt-3 font-display text-xl">{s.t}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{s.d}</p>
-            </div>
-          ))}
+      <section id="camino" className="relative mx-auto max-w-6xl px-4 py-24">
+        <div className="absolute inset-0 knot-pattern opacity-25 dark:opacity-30" aria-hidden />
+        <div className="relative">
+          <p className="eyebrow text-center">Capítulo I</p>
+          <h2 className="mt-2 text-center font-display text-4xl uppercase tracking-wide md:text-5xl">
+            El Camino del <span className="text-gold">Guerrero</span>
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-center font-body text-lg italic text-muted-foreground">
+            Un proceso claro, guiado paso a paso.
+          </p>
+          <div className="mt-12 grid gap-6 md:grid-cols-4">
+            {[
+              { n: "I", t: "Evaluación inicial", d: "Conocemos tu estado actual, objetivos y limitaciones." },
+              { n: "II", t: "Plan personalizado", d: "Diseñamos una ruta a tu medida." },
+              { n: "III", t: "Entrenamiento guiado", d: "Sesiones presenciales con supervisión profesional." },
+              { n: "IV", t: "Seguimiento continuo", d: "Revisión de progreso en tu portal personal." },
+            ].map((s) => (
+              <div key={s.n} className="surface-card surface-card-active p-6">
+                <div className="font-display text-4xl font-bold text-gold">{s.n}</div>
+                <h3 className="mt-3 font-display text-lg uppercase tracking-wider">{s.t}</h3>
+                <p className="mt-2 font-body text-base text-muted-foreground">{s.d}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       <div className="runic-divider mx-auto max-w-3xl" />
 
       {/* Benefits */}
-      <section className="mx-auto max-w-6xl px-4 py-20">
-        <h2 className="text-center font-display text-3xl font-bold md:text-4xl">Tu Legado Empieza Aquí</h2>
-        <p className="mx-auto mt-3 max-w-xl text-center text-muted-foreground">
+      <section className="mx-auto max-w-6xl px-4 py-24">
+        <p className="eyebrow text-center">Capítulo II</p>
+        <h2 className="mt-2 text-center font-display text-4xl uppercase tracking-wide md:text-5xl">
+          Tu Legado <span className="text-gold">Empieza Aquí</span>
+        </h2>
+        <p className="mx-auto mt-3 max-w-xl text-center font-body text-lg italic text-muted-foreground">
           Más años con energía. Más fuerza para lo que importa.
         </p>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
@@ -95,8 +114,8 @@ function Landing() {
           ].map((b) => (
             <div key={b.t} className="surface-card p-6">
               <b.i className="h-8 w-8 text-gold" />
-              <h3 className="mt-4 font-display text-xl">{b.t}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{b.d}</p>
+              <h3 className="mt-4 font-display text-lg uppercase tracking-wider">{b.t}</h3>
+              <p className="mt-2 font-body text-base text-muted-foreground">{b.d}</p>
             </div>
           ))}
         </div>
@@ -105,28 +124,37 @@ function Landing() {
       <div className="runic-divider mx-auto max-w-3xl" />
 
       {/* Platform preview */}
-      <section className="mx-auto max-w-6xl px-4 py-20">
-        <h2 className="text-center font-display text-3xl font-bold md:text-4xl">Tu Portal Personal</h2>
-        <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {[
-            { i: TrendingUp, t: "Tu progreso", d: "Peso, grasa y masa muscular en gráficos claros." },
-            { i: ClipboardCheck, t: "Historial completo", d: "Cada evaluación queda registrada." },
-            { i: Users, t: "Asistencias", d: "Registro mensual de tus clases." },
-            { i: MessageCircle, t: "Recomendaciones", d: "Mensajes directos de tu entrenador." },
-          ].map((b) => (
-            <div key={b.t} className="surface-card p-6">
-              <b.i className="h-7 w-7 text-gold" />
-              <h3 className="mt-4 font-display text-lg">{b.t}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{b.d}</p>
-            </div>
-          ))}
+      <section className="relative mx-auto max-w-6xl px-4 py-24">
+        <div className="absolute inset-0 knot-pattern opacity-20 dark:opacity-25" aria-hidden />
+        <div className="relative">
+          <p className="eyebrow text-center">Capítulo III</p>
+          <h2 className="mt-2 text-center font-display text-4xl uppercase tracking-wide md:text-5xl">
+            Tu <span className="text-gold">Portal Personal</span>
+          </h2>
+          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {[
+              { i: TrendingUp, t: "Tu progreso", d: "Peso, grasa y masa muscular en gráficos claros." },
+              { i: ClipboardCheck, t: "Historial completo", d: "Cada evaluación queda registrada." },
+              { i: Users, t: "Asistencias", d: "Registro mensual de tus clases." },
+              { i: MessageCircle, t: "Recomendaciones", d: "Mensajes directos de tu entrenador." },
+            ].map((b) => (
+              <div key={b.t} className="surface-card p-6">
+                <b.i className="h-7 w-7 text-gold" />
+                <h3 className="mt-4 font-display text-base uppercase tracking-wider">{b.t}</h3>
+                <p className="mt-2 font-body text-base text-muted-foreground">{b.d}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Contact */}
-      <section className="mx-auto max-w-3xl px-4 py-20 text-center">
-        <h2 className="font-display text-3xl font-bold md:text-4xl">Habla con Nosotros</h2>
-        <p className="mt-3 text-muted-foreground">¿Listo para comenzar? Escríbenos directamente.</p>
+      <section className="mx-auto max-w-3xl px-4 py-24 text-center">
+        <p className="eyebrow">Contacto</p>
+        <h2 className="mt-2 font-display text-4xl uppercase tracking-wide md:text-5xl">
+          Habla con <span className="text-gold">Nosotros</span>
+        </h2>
+        <p className="mt-3 font-body text-lg italic text-muted-foreground">¿Listo para comenzar? Escríbenos directamente.</p>
         <div className="mt-8 flex flex-wrap justify-center gap-4">
           <a href="https://wa.me/56912345678" target="_blank" rel="noreferrer" className="btn-primary">
             <MessageCircle className="mr-2 h-5 w-5" /> WhatsApp
