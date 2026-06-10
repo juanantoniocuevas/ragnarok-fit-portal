@@ -46,76 +46,77 @@
 :root {
   --radius: 0.75rem;
 
-  /* Brand */
-  --background: oklch(0.13 0.005 240);          /* #0A0A0A near black */
-  --foreground: oklch(1 0 0);                   /* white */
+  /* Brand — Dark mode: pure black + gold (#e3a80b) */
+  --background: oklch(0 0 0);                  /* #000000 */
+  --foreground: oklch(1 0 0);
 
-  --navy: oklch(0.27 0.06 260);                 /* #1B2A4A */
-  --slate-deep: oklch(0.32 0.03 250);           /* #2B3440 */
-  --gold: oklch(0.74 0.14 80);                  /* #D4A017 */
-  --gold-hover: oklch(0.82 0.15 85);            /* #F0C040 */
-  --parchment: oklch(0.88 0.04 85);             /* #E6D8BD */
-  --rust: oklch(0.62 0.13 45);                  /* #C67A45 */
-  --vitality: oklch(0.72 0.18 145);             /* #22c55e */
+  --navy: oklch(0.29 0.07 256);                /* #193253 */
+  --slate-deep: oklch(0.32 0.03 250);
+  --gold: oklch(0.72 0.15 75);                 /* #e3a80b */
+  --gold-hover: oklch(0.80 0.16 80);
+  --parchment: oklch(0.88 0.04 85);
+  --rust: oklch(0.62 0.13 45);
+  --vitality: oklch(0.72 0.18 145);
 
-  --card: oklch(0.27 0.06 260);                 /* navy cards */
+  --card: oklch(0.14 0 0);
   --card-foreground: oklch(0.98 0 0);
-  --popover: oklch(0.27 0.06 260);
+  --popover: oklch(0.14 0 0);
   --popover-foreground: oklch(0.98 0 0);
 
-  --primary: oklch(0.74 0.14 80);               /* gold */
-  --primary-foreground: oklch(0.13 0.005 240);  /* black on gold */
+  --primary: oklch(0.72 0.15 75);
+  --primary-foreground: oklch(0 0 0);
 
-  --secondary: oklch(0.32 0.03 250);
+  --secondary: oklch(0.2 0 0);
   --secondary-foreground: oklch(0.98 0 0);
 
-  --muted: oklch(0.27 0.06 260);
-  --muted-foreground: oklch(0.75 0.02 250);     /* #A0AEC0 */
+  --muted: oklch(0.18 0 0);
+  --muted-foreground: oklch(0.72 0.02 85);
 
-  --accent: oklch(0.74 0.14 80);
-  --accent-foreground: oklch(0.13 0.005 240);
+  --accent: oklch(0.72 0.15 75);
+  --accent-foreground: oklch(0 0 0);
 
   --destructive: oklch(0.62 0.22 25);
   --destructive-foreground: oklch(0.98 0 0);
 
-  --border: oklch(0.35 0.05 255);               /* #2D3E5F */
-  --input: oklch(0.32 0.03 250);
-  --ring: oklch(0.74 0.14 80);
+  --border: oklch(0.28 0.05 80);
+  --input: oklch(0.2 0 0);
+  --ring: oklch(0.72 0.15 75);
 }
 
 .dark {
-  --background: oklch(0.13 0.005 240);
+  --background: oklch(0 0 0);
   --foreground: oklch(1 0 0);
 }
 
 .light {
-  --background: oklch(0.99 0.005 85);          /* near white, warm */
-  --foreground: oklch(0.22 0.04 260);          /* navy text */
+  /* Light mode: pure white + navy (#193253) per BrandBook */
+  --background: oklch(1 0 0);                  /* #FFFFFF */
+  --foreground: oklch(0.29 0.07 256);          /* navy text */
 
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.04 260);
+  --card-foreground: oklch(0.29 0.07 256);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.04 260);
+  --popover-foreground: oklch(0.29 0.07 256);
 
-  --primary: oklch(0.27 0.06 260);             /* navy */
-  --primary-foreground: oklch(0.99 0.005 85);
+  --primary: oklch(0.29 0.07 256);             /* navy */
+  --primary-foreground: oklch(1 0 0);
 
-  --secondary: oklch(0.94 0.01 85);
-  --secondary-foreground: oklch(0.22 0.04 260);
+  --secondary: oklch(0.96 0.005 250);
+  --secondary-foreground: oklch(0.29 0.07 256);
 
-  --muted: oklch(0.96 0.01 85);
-  --muted-foreground: oklch(0.45 0.03 260);
+  --muted: oklch(0.97 0.005 250);
+  --muted-foreground: oklch(0.45 0.05 256);
 
-  --accent: oklch(0.27 0.06 260);              /* navy in light mode */
-  --accent-foreground: oklch(0.99 0.005 85);
+  --accent: oklch(0.29 0.07 256);
+  --accent-foreground: oklch(1 0 0);
 
-  /* Override gold → navy in light mode so every accent reads as brand navy */
-  --gold: oklch(0.27 0.06 260);
-  --gold-hover: oklch(0.34 0.08 260);
+  /* In light mode all "gold" accents become brand navy */
+  --gold: oklch(0.29 0.07 256);
+  --gold-hover: oklch(0.36 0.09 256);
 
   --border: oklch(0.88 0.02 250);
-  --input: oklch(0.94 0.01 85);
-  --ring: oklch(0.27 0.06 260);
+  --input: oklch(0.96 0.005 250);
+  --ring: oklch(0.29 0.07 256);
 }
 
 /* Light-mode button contrast: navy bg needs white text */
