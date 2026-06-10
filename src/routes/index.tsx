@@ -29,22 +29,30 @@ function Landing() {
       </header>
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden drip-top">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${heroBg.url})` }}
           aria-hidden
         />
-        {/* Dark mode: darken image for white text legibility */}
-        <div className="absolute inset-0 bg-background/70 dark:bg-background/75" aria-hidden />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_color-mix(in_oklab,var(--color-gold)_18%,transparent),_transparent_65%)]" aria-hidden />
+        <div className="absolute inset-0 bg-background/80 dark:bg-background/85" aria-hidden />
+        <div className="absolute inset-0 knot-pattern opacity-30 dark:opacity-40" aria-hidden />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_color-mix(in_oklab,var(--color-gold)_15%,transparent),_transparent_65%)]" aria-hidden />
+
+        {/* Side gold braids — desktop only */}
+        <div className="braid-vertical absolute left-0 top-0 hidden h-full w-10 opacity-60 lg:block" aria-hidden />
+        <div className="braid-vertical absolute right-0 top-0 hidden h-full w-10 opacity-60 lg:block" aria-hidden />
+
         <div className="relative mx-auto max-w-5xl px-4 py-28 text-center md:py-36">
-          <Logo className="mx-auto mb-10 h-48 w-auto md:h-64 lg:h-72 drop-shadow-2xl" />
-          <h1 className="font-display text-4xl font-bold leading-tight md:text-6xl">
-            Entrena como un guerrero.<br />
-            <span className="text-gold">Vive más tiempo.</span>
+          <Logo className="mx-auto mb-8 h-44 w-auto md:h-60 lg:h-72 drop-shadow-2xl" />
+          <p className="eyebrow mb-4">Identidad · Disciplina · Legado</p>
+          <h1 className="font-rune text-5xl leading-none text-gold md:text-7xl lg:text-8xl">
+            Entrena como un guerrero.
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-foreground/80">
+          <h2 className="mt-4 font-display text-2xl uppercase tracking-[0.3em] text-foreground/90 md:text-3xl">
+            Vive más tiempo.
+          </h2>
+          <p className="mx-auto mt-8 max-w-2xl font-body text-lg italic text-foreground/85 md:text-xl">
             Ragnarok Fit — acompañamiento personalizado para mejorar tu salud, movilidad y calidad de vida.
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-4">
