@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap");
+/* Fonts loaded via <link> in src/routes/__root.tsx (Lightning CSS cannot fetch remote @import) */
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
