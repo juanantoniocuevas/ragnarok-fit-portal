@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { LayoutDashboard, TrendingUp, CalendarCheck, MessageSquare, Phone, LogOut } from "lucide-react";
+import { LayoutDashboard, TrendingUp, CalendarCheck, MessageSquare, Phone, LogOut, User } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard")({
   ssr: false,
@@ -31,6 +31,7 @@ function DashboardLayout() {
     { to: "/dashboard/classes", label: "Mis Clases", icon: CalendarCheck },
     { to: "/dashboard/recommendations", label: "Recomendaciones", icon: MessageSquare },
     { to: "/dashboard/contact", label: "Contactar", icon: Phone },
+    { to: "/dashboard/profile", label: "Mi Perfil", icon: User },
   ];
 
   return (

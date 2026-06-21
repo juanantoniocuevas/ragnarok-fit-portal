@@ -26,10 +26,14 @@ function LoginPage() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
     setSubmitting(false);
     if (error) {
-      toast.error("Credenciales incorrectas");
+      if (error.message.toLowerCase().includes("email not confirmed")) {
+        toast.error("Debes verificar tu correo antes de ingresar.");
+      } else {
+        toast.error("Credenciales incorrectas");
+      }
       return;
     }
     toast.success("Bienvenido");
@@ -55,12 +59,20 @@ function LoginPage() {
               <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
                 className="h-12 w-full rounded-md border border-border bg-input/30 px-3 text-base outline-none focus:border-gold" />
             </div>
+            <div className="text-right">
+              <Link to="/forgot-password" className="text-xs text-muted-foreground hover:text-gold">
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </div>
             <button type="submit" disabled={submitting} className="btn-primary w-full disabled:opacity-60">
               {submitting ? "Ingresando..." : "Ingresar"}
             </button>
           </form>
-          <p className="mt-6 text-center text-xs text-muted-foreground">
-            ¿No tienes cuenta? Habla con tu entrenador.
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            ¿No tienes cuenta?{" "}
+            <Link to="/signup" className="font-medium text-gold hover:underline">
+              Crear cuenta
+            </Link>
           </p>
         </div>
         <div className="mt-4 text-center">
