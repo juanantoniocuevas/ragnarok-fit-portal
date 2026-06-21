@@ -9,7 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -17,6 +20,7 @@ import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as DashboardRecommendationsRouteImport } from './routes/dashboard/recommendations'
 import { Route as DashboardProgressRouteImport } from './routes/dashboard/progress'
+import { Route as DashboardProfileRouteImport } from './routes/dashboard/profile'
 import { Route as DashboardContactRouteImport } from './routes/dashboard/contact'
 import { Route as DashboardClassesRouteImport } from './routes/dashboard/classes'
 import { Route as AdminRecommendationsRouteImport } from './routes/admin/recommendations'
@@ -24,9 +28,24 @@ import { Route as AdminEvaluationsRouteImport } from './routes/admin/evaluations
 import { Route as AdminClientsRouteImport } from './routes/admin/clients'
 import { Route as AdminAttendanceRouteImport } from './routes/admin/attendance'
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
@@ -65,6 +84,11 @@ const DashboardProgressRoute = DashboardProgressRouteImport.update({
   path: '/progress',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
+const DashboardProfileRoute = DashboardProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
 const DashboardContactRoute = DashboardContactRouteImport.update({
   id: '/contact',
   path: '/contact',
@@ -100,13 +124,17 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/signup': typeof SignupRoute
   '/admin/attendance': typeof AdminAttendanceRoute
   '/admin/clients': typeof AdminClientsRoute
   '/admin/evaluations': typeof AdminEvaluationsRoute
   '/admin/recommendations': typeof AdminRecommendationsRoute
   '/dashboard/classes': typeof DashboardClassesRoute
   '/dashboard/contact': typeof DashboardContactRoute
+  '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/progress': typeof DashboardProgressRoute
   '/dashboard/recommendations': typeof DashboardRecommendationsRoute
   '/admin/': typeof AdminIndexRoute
@@ -114,13 +142,17 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/signup': typeof SignupRoute
   '/admin/attendance': typeof AdminAttendanceRoute
   '/admin/clients': typeof AdminClientsRoute
   '/admin/evaluations': typeof AdminEvaluationsRoute
   '/admin/recommendations': typeof AdminRecommendationsRoute
   '/dashboard/classes': typeof DashboardClassesRoute
   '/dashboard/contact': typeof DashboardContactRoute
+  '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/progress': typeof DashboardProgressRoute
   '/dashboard/recommendations': typeof DashboardRecommendationsRoute
   '/admin': typeof AdminIndexRoute
@@ -131,13 +163,17 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/signup': typeof SignupRoute
   '/admin/attendance': typeof AdminAttendanceRoute
   '/admin/clients': typeof AdminClientsRoute
   '/admin/evaluations': typeof AdminEvaluationsRoute
   '/admin/recommendations': typeof AdminRecommendationsRoute
   '/dashboard/classes': typeof DashboardClassesRoute
   '/dashboard/contact': typeof DashboardContactRoute
+  '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/progress': typeof DashboardProgressRoute
   '/dashboard/recommendations': typeof DashboardRecommendationsRoute
   '/admin/': typeof AdminIndexRoute
@@ -149,13 +185,17 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/dashboard'
+    | '/forgot-password'
     | '/login'
+    | '/reset-password'
+    | '/signup'
     | '/admin/attendance'
     | '/admin/clients'
     | '/admin/evaluations'
     | '/admin/recommendations'
     | '/dashboard/classes'
     | '/dashboard/contact'
+    | '/dashboard/profile'
     | '/dashboard/progress'
     | '/dashboard/recommendations'
     | '/admin/'
@@ -163,13 +203,17 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/forgot-password'
     | '/login'
+    | '/reset-password'
+    | '/signup'
     | '/admin/attendance'
     | '/admin/clients'
     | '/admin/evaluations'
     | '/admin/recommendations'
     | '/dashboard/classes'
     | '/dashboard/contact'
+    | '/dashboard/profile'
     | '/dashboard/progress'
     | '/dashboard/recommendations'
     | '/admin'
@@ -179,13 +223,17 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/dashboard'
+    | '/forgot-password'
     | '/login'
+    | '/reset-password'
+    | '/signup'
     | '/admin/attendance'
     | '/admin/clients'
     | '/admin/evaluations'
     | '/admin/recommendations'
     | '/dashboard/classes'
     | '/dashboard/contact'
+    | '/dashboard/profile'
     | '/dashboard/progress'
     | '/dashboard/recommendations'
     | '/admin/'
@@ -196,16 +244,40 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  SignupRoute: typeof SignupRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -255,6 +327,13 @@ declare module '@tanstack/react-router' {
       path: '/progress'
       fullPath: '/dashboard/progress'
       preLoaderRoute: typeof DashboardProgressRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/profile': {
+      id: '/dashboard/profile'
+      path: '/profile'
+      fullPath: '/dashboard/profile'
+      preLoaderRoute: typeof DashboardProfileRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/dashboard/contact': {
@@ -325,6 +404,7 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
 interface DashboardRouteRouteChildren {
   DashboardClassesRoute: typeof DashboardClassesRoute
   DashboardContactRoute: typeof DashboardContactRoute
+  DashboardProfileRoute: typeof DashboardProfileRoute
   DashboardProgressRoute: typeof DashboardProgressRoute
   DashboardRecommendationsRoute: typeof DashboardRecommendationsRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
@@ -333,6 +413,7 @@ interface DashboardRouteRouteChildren {
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardClassesRoute: DashboardClassesRoute,
   DashboardContactRoute: DashboardContactRoute,
+  DashboardProfileRoute: DashboardProfileRoute,
   DashboardProgressRoute: DashboardProgressRoute,
   DashboardRecommendationsRoute: DashboardRecommendationsRoute,
   DashboardIndexRoute: DashboardIndexRoute,
@@ -346,7 +427,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
+  SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
