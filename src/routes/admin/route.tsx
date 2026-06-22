@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { Users, ClipboardList, CalendarCheck, MessageSquare, LogOut } from "lucide-react";
+import { Users, MessageSquare, LogOut } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({ ssr: false, component: AdminLayout });
 
@@ -22,9 +22,7 @@ function AdminLayout() {
     return <div className="flex min-h-screen items-center justify-center text-muted-foreground">Cargando...</div>;
 
   const links = [
-    { to: "/admin/clients", label: "Clientes", icon: Users },
-    { to: "/admin/evaluations", label: "Evaluaciones", icon: ClipboardList },
-    { to: "/admin/attendance", label: "Asistencias", icon: CalendarCheck },
+    { to: "/admin/clients", label: "Mis Clientes", icon: Users },
     { to: "/admin/recommendations", label: "Recomendaciones", icon: MessageSquare },
   ];
 
@@ -34,7 +32,7 @@ function AdminLayout() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
           <Link to="/admin/clients"><Logo className="h-16 w-auto" /></Link>
           <div className="flex items-center gap-3">
-            <span className="hidden text-sm text-muted-foreground md:inline">Panel del Entrenador</span>
+            <span className="hidden text-sm text-muted-foreground md:inline">Panel del Preparador</span>
             <ThemeToggle />
             <button onClick={() => signOut().then(() => navigate({ to: "/" }))} className="btn-secondary text-sm">
               <LogOut className="mr-2 h-4 w-4" /> Salir

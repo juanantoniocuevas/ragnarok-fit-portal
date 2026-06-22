@@ -1,87 +1,98 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/clients")({ component: Clients });
 
 function Clients() {
+  const { user } = useAuth();
   const [rows, setRows] = useState<any[]>([]);
   const [search, setSearch] = useState("");
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ full_name: "", email: "", password: "", phone: "" });
-  const [saving, setSaving] = useState(false);
+  const [emailToAssign, setEmailToAssign] = useState("");
+  const [assigning, setAssigning] = useState(false);
 
   const load = async () => {
-    const { data } = await supabase.from("profiles").select("*, user_roles(role)").order("created_at", { ascending: false });
-    setRows((data ?? []).filter((p: any) => p.user_roles?.some((r: any) => r.role === "client")));
+    if (!user) return;
+    const { data: links } = await supabase
+      .from("trainer_clients")
+      .select("client_id, created_at")
+      .eq("trainer_id", user.id);
+    const ids = (links ?? []).map((l: any) => l.client_id);
+    if (ids.length === 0) return setRows([]);
+    const { data: profiles } = await supabase.from("profiles").select("*").in("id", ids);
+    setRows(profiles ?? []);
   };
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [user]);
 
-  const create = async (e: React.FormEvent) => {
+  const assign = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSaving(true);
-    // Use signUp - signups disabled globally so call admin via edge? Use regular signUp won't work with disable_signup.
-    // Trainer creates clients: we need admin API. Use a server function (skipped for time).
-    // Workaround: temporarily call signup via admin endpoint requires service role.
-    toast.info("Crear cuentas requiere configuración adicional. Pide al administrador del sistema crear clientes manualmente por ahora.");
-    setSaving(false);
-    setShowForm(false);
-    setForm({ full_name: "", email: "", password: "", phone: "" });
+    if (!user) return;
+    setAssigning(true);
+    const email = emailToAssign.trim().toLowerCase();
+    const { data: prof } = await supabase.from("profiles").select("id, full_name").eq("email", email).maybeSingle();
+    if (!prof) {
+      setAssigning(false);
+      return toast.error("No existe un usuario con ese correo. Pídele registrarse primero.");
+    }
+    const { error } = await supabase.from("trainer_clients").insert({ trainer_id: user.id, client_id: prof.id });
+    setAssigning(false);
+    if (error) {
+      if (error.code === "23505") return toast.error("Ese cliente ya está asignado a ti.");
+      return toast.error(error.message);
+    }
+    toast.success(`${prof.full_name} asignado correctamente.`);
+    setEmailToAssign("");
+    load();
   };
 
-  const toggleActive = async (id: string, current: boolean) => {
-    await supabase.from("profiles").update({ is_active: !current }).eq("id", id);
+  const unassign = async (clientId: string) => {
+    if (!user) return;
+    if (!confirm("¿Quitar este cliente de tu lista?")) return;
+    await supabase.from("trainer_clients").delete().eq("trainer_id", user.id).eq("client_id", clientId);
+    toast.success("Cliente removido");
     load();
-    toast.success(current ? "Cuenta desactivada" : "Cuenta activada");
   };
 
   const filtered = rows.filter((r) => r.full_name?.toLowerCase().includes(search.toLowerCase()) || r.email?.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-display text-3xl font-bold">Clientes</h1>
-        <button onClick={() => setShowForm((s) => !s)} className="btn-primary">+ Nuevo cliente</button>
-      </div>
-      <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar por nombre o correo..."
-        className="h-12 w-full rounded-md border border-border bg-input/30 px-3 outline-none focus:border-gold" />
+      <h1 className="font-display text-3xl font-bold">Mis Clientes</h1>
 
-      {showForm && (
-        <form onSubmit={create} className="surface-card surface-card-active grid gap-3 p-6 md:grid-cols-2">
-          <input required placeholder="Nombre completo" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} className="h-12 rounded-md border border-border bg-input/30 px-3" />
-          <input required type="email" placeholder="Correo" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="h-12 rounded-md border border-border bg-input/30 px-3" />
-          <input required type="password" placeholder="Contraseña" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="h-12 rounded-md border border-border bg-input/30 px-3" />
-          <input placeholder="Teléfono" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="h-12 rounded-md border border-border bg-input/30 px-3" />
-          <button disabled={saving} type="submit" className="btn-primary md:col-span-2">{saving ? "Guardando..." : "Crear"}</button>
-        </form>
-      )}
+      <form onSubmit={assign} className="surface-card flex flex-col gap-3 p-6 sm:flex-row">
+        <input required type="email" placeholder="Correo del cliente a asignar" value={emailToAssign}
+          onChange={(e) => setEmailToAssign(e.target.value)}
+          className="h-12 flex-1 rounded-md border border-border bg-input/30 px-3 outline-none focus:border-gold" />
+        <button disabled={assigning} className="btn-primary">{assigning ? "Asignando..." : "Asignar cliente"}</button>
+      </form>
+
+      <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar en mis clientes..."
+        className="h-12 w-full rounded-md border border-border bg-input/30 px-3 outline-none focus:border-gold" />
 
       <div className="surface-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-background/40 text-left text-muted-foreground">
-              <tr><th className="p-4">Nombre</th><th className="p-4">Correo</th><th className="p-4">Teléfono</th><th className="p-4">Estado</th><th className="p-4"></th></tr>
+              <tr><th className="p-4">Nombre</th><th className="p-4">Correo</th><th className="p-4">Teléfono</th><th className="p-4"></th></tr>
             </thead>
             <tbody>
               {filtered.map((r) => (
                 <tr key={r.id} className="border-t border-border">
-                  <td className="p-4 font-medium">{r.full_name}</td>
+                  <td className="p-4 font-medium">
+                    <Link to="/admin/clients/$clientId" params={{ clientId: r.id }} className="text-gold hover:underline">
+                      {r.full_name}
+                    </Link>
+                  </td>
                   <td className="p-4 text-muted-foreground">{r.email}</td>
                   <td className="p-4 text-muted-foreground">{r.phone ?? "—"}</td>
-                  <td className="p-4">
-                    <span className={`rounded-full px-3 py-1 text-xs ${r.is_active ? "bg-vitality/20 text-vitality" : "bg-destructive/20 text-destructive"}`}>
-                      {r.is_active ? "Activo" : "Inactivo"}
-                    </span>
-                  </td>
                   <td className="p-4 text-right">
-                    <button onClick={() => toggleActive(r.id, r.is_active)} className="text-sm text-gold hover:underline">
-                      {r.is_active ? "Desactivar" : "Activar"}
-                    </button>
+                    <button onClick={() => unassign(r.id)} className="text-sm text-destructive hover:underline">Quitar</button>
                   </td>
                 </tr>
               ))}
-              {filtered.length === 0 && <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">Sin clientes.</td></tr>}
+              {filtered.length === 0 && <tr><td colSpan={4} className="p-8 text-center text-muted-foreground">Aún no tienes clientes asignados.</td></tr>}
             </tbody>
           </table>
         </div>

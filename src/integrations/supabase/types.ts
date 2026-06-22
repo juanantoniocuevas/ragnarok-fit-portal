@@ -14,75 +14,107 @@ export type Database = {
   }
   public: {
     Tables: {
-      attendance: {
+      measurements: {
         Row: {
-          client_id: string
+          activity_level: string
+          bmr: number | null
+          body_fat_pct: number | null
           created_at: string
-          date: string
+          daily_calories: number | null
+          deleted_at: string | null
+          fat_mass_kg: number | null
+          healthy_weight_kg: number | null
+          hip_cm: number | null
           id: string
+          imc: number | null
+          lean_mass_kg: number | null
+          muscle_mass_kg: number | null
+          neck_cm: number
+          updated_at: string
+          user_id: string
+          visceral_fat: number | null
+          waist_cm: number
+          water_pct: number | null
+          weight_kg: number
         }
         Insert: {
-          client_id: string
+          activity_level: string
+          bmr?: number | null
+          body_fat_pct?: number | null
           created_at?: string
-          date: string
+          daily_calories?: number | null
+          deleted_at?: string | null
+          fat_mass_kg?: number | null
+          healthy_weight_kg?: number | null
+          hip_cm?: number | null
           id?: string
+          imc?: number | null
+          lean_mass_kg?: number | null
+          muscle_mass_kg?: number | null
+          neck_cm: number
+          updated_at?: string
+          user_id: string
+          visceral_fat?: number | null
+          waist_cm: number
+          water_pct?: number | null
+          weight_kg: number
         }
         Update: {
-          client_id?: string
+          activity_level?: string
+          bmr?: number | null
+          body_fat_pct?: number | null
           created_at?: string
-          date?: string
+          daily_calories?: number | null
+          deleted_at?: string | null
+          fat_mass_kg?: number | null
+          healthy_weight_kg?: number | null
+          hip_cm?: number | null
           id?: string
+          imc?: number | null
+          lean_mass_kg?: number | null
+          muscle_mass_kg?: number | null
+          neck_cm?: number
+          updated_at?: string
+          user_id?: string
+          visceral_fat?: number | null
+          waist_cm?: number
+          water_pct?: number | null
+          weight_kg?: number
         }
-        Relationships: [
-          {
-            foreignKeyName: "attendance_client_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
-      evaluations: {
+      physical_profiles: {
         Row: {
-          body_fat: number | null
-          client_id: string
+          age: number | null
           created_at: string
-          date: string
+          goal: string | null
+          height_cm: number | null
           id: string
-          muscle_mass: number | null
-          notes: string | null
-          weight: number | null
+          sex: string | null
+          updated_at: string
+          user_id: string
         }
         Insert: {
-          body_fat?: number | null
-          client_id: string
+          age?: number | null
           created_at?: string
-          date: string
+          goal?: string | null
+          height_cm?: number | null
           id?: string
-          muscle_mass?: number | null
-          notes?: string | null
-          weight?: number | null
+          sex?: string | null
+          updated_at?: string
+          user_id: string
         }
         Update: {
-          body_fat?: number | null
-          client_id?: string
+          age?: number | null
           created_at?: string
-          date?: string
+          goal?: string | null
+          height_cm?: number | null
           id?: string
-          muscle_mass?: number | null
-          notes?: string | null
-          weight?: number | null
+          sex?: string | null
+          updated_at?: string
+          user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "evaluations_client_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -113,32 +145,54 @@ export type Database = {
       }
       recommendations: {
         Row: {
+          admin_id: string
           client_id: string
           content: string
           created_at: string
+          deleted_at: string | null
           id: string
+          updated_at: string
         }
         Insert: {
+          admin_id: string
           client_id: string
           content: string
           created_at?: string
+          deleted_at?: string | null
           id?: string
+          updated_at?: string
         }
         Update: {
+          admin_id?: string
           client_id?: string
           content?: string
           created_at?: string
+          deleted_at?: string | null
           id?: string
+          updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "recommendations_client_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
+      }
+      trainer_clients: {
+        Row: {
+          client_id: string
+          created_at: string
+          id: string
+          trainer_id: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          id?: string
+          trainer_id: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          id?: string
+          trainer_id?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
@@ -168,6 +222,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      is_trainer_of: {
+        Args: { _client: string; _trainer: string }
         Returns: boolean
       }
     }

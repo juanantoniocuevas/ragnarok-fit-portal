@@ -21,12 +21,12 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as DashboardRecommendationsRouteImport } from './routes/dashboard/recommendations'
 import { Route as DashboardProgressRouteImport } from './routes/dashboard/progress'
 import { Route as DashboardProfileRouteImport } from './routes/dashboard/profile'
+import { Route as DashboardPhysicalProfileRouteImport } from './routes/dashboard/physical-profile'
+import { Route as DashboardMeasurementsRouteImport } from './routes/dashboard/measurements'
 import { Route as DashboardContactRouteImport } from './routes/dashboard/contact'
-import { Route as DashboardClassesRouteImport } from './routes/dashboard/classes'
 import { Route as AdminRecommendationsRouteImport } from './routes/admin/recommendations'
-import { Route as AdminEvaluationsRouteImport } from './routes/admin/evaluations'
 import { Route as AdminClientsRouteImport } from './routes/admin/clients'
-import { Route as AdminAttendanceRouteImport } from './routes/admin/attendance'
+import { Route as AdminClientsClientIdRouteImport } from './routes/admin/clients.$clientId'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -89,14 +89,20 @@ const DashboardProfileRoute = DashboardProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
+const DashboardPhysicalProfileRoute =
+  DashboardPhysicalProfileRouteImport.update({
+    id: '/physical-profile',
+    path: '/physical-profile',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
+const DashboardMeasurementsRoute = DashboardMeasurementsRouteImport.update({
+  id: '/measurements',
+  path: '/measurements',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
 const DashboardContactRoute = DashboardContactRouteImport.update({
   id: '/contact',
   path: '/contact',
-  getParentRoute: () => DashboardRouteRoute,
-} as any)
-const DashboardClassesRoute = DashboardClassesRouteImport.update({
-  id: '/classes',
-  path: '/classes',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 const AdminRecommendationsRoute = AdminRecommendationsRouteImport.update({
@@ -104,20 +110,15 @@ const AdminRecommendationsRoute = AdminRecommendationsRouteImport.update({
   path: '/recommendations',
   getParentRoute: () => AdminRouteRoute,
 } as any)
-const AdminEvaluationsRoute = AdminEvaluationsRouteImport.update({
-  id: '/evaluations',
-  path: '/evaluations',
-  getParentRoute: () => AdminRouteRoute,
-} as any)
 const AdminClientsRoute = AdminClientsRouteImport.update({
   id: '/clients',
   path: '/clients',
   getParentRoute: () => AdminRouteRoute,
 } as any)
-const AdminAttendanceRoute = AdminAttendanceRouteImport.update({
-  id: '/attendance',
-  path: '/attendance',
-  getParentRoute: () => AdminRouteRoute,
+const AdminClientsClientIdRoute = AdminClientsClientIdRouteImport.update({
+  id: '/$clientId',
+  path: '/$clientId',
+  getParentRoute: () => AdminClientsRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -128,17 +129,17 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
-  '/admin/attendance': typeof AdminAttendanceRoute
-  '/admin/clients': typeof AdminClientsRoute
-  '/admin/evaluations': typeof AdminEvaluationsRoute
+  '/admin/clients': typeof AdminClientsRouteWithChildren
   '/admin/recommendations': typeof AdminRecommendationsRoute
-  '/dashboard/classes': typeof DashboardClassesRoute
   '/dashboard/contact': typeof DashboardContactRoute
+  '/dashboard/measurements': typeof DashboardMeasurementsRoute
+  '/dashboard/physical-profile': typeof DashboardPhysicalProfileRoute
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/progress': typeof DashboardProgressRoute
   '/dashboard/recommendations': typeof DashboardRecommendationsRoute
   '/admin/': typeof AdminIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/admin/clients/$clientId': typeof AdminClientsClientIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -146,17 +147,17 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
-  '/admin/attendance': typeof AdminAttendanceRoute
-  '/admin/clients': typeof AdminClientsRoute
-  '/admin/evaluations': typeof AdminEvaluationsRoute
+  '/admin/clients': typeof AdminClientsRouteWithChildren
   '/admin/recommendations': typeof AdminRecommendationsRoute
-  '/dashboard/classes': typeof DashboardClassesRoute
   '/dashboard/contact': typeof DashboardContactRoute
+  '/dashboard/measurements': typeof DashboardMeasurementsRoute
+  '/dashboard/physical-profile': typeof DashboardPhysicalProfileRoute
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/progress': typeof DashboardProgressRoute
   '/dashboard/recommendations': typeof DashboardRecommendationsRoute
   '/admin': typeof AdminIndexRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/admin/clients/$clientId': typeof AdminClientsClientIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -167,17 +168,17 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
-  '/admin/attendance': typeof AdminAttendanceRoute
-  '/admin/clients': typeof AdminClientsRoute
-  '/admin/evaluations': typeof AdminEvaluationsRoute
+  '/admin/clients': typeof AdminClientsRouteWithChildren
   '/admin/recommendations': typeof AdminRecommendationsRoute
-  '/dashboard/classes': typeof DashboardClassesRoute
   '/dashboard/contact': typeof DashboardContactRoute
+  '/dashboard/measurements': typeof DashboardMeasurementsRoute
+  '/dashboard/physical-profile': typeof DashboardPhysicalProfileRoute
   '/dashboard/profile': typeof DashboardProfileRoute
   '/dashboard/progress': typeof DashboardProgressRoute
   '/dashboard/recommendations': typeof DashboardRecommendationsRoute
   '/admin/': typeof AdminIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/admin/clients/$clientId': typeof AdminClientsClientIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -189,17 +190,17 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/signup'
-    | '/admin/attendance'
     | '/admin/clients'
-    | '/admin/evaluations'
     | '/admin/recommendations'
-    | '/dashboard/classes'
     | '/dashboard/contact'
+    | '/dashboard/measurements'
+    | '/dashboard/physical-profile'
     | '/dashboard/profile'
     | '/dashboard/progress'
     | '/dashboard/recommendations'
     | '/admin/'
     | '/dashboard/'
+    | '/admin/clients/$clientId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -207,17 +208,17 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/signup'
-    | '/admin/attendance'
     | '/admin/clients'
-    | '/admin/evaluations'
     | '/admin/recommendations'
-    | '/dashboard/classes'
     | '/dashboard/contact'
+    | '/dashboard/measurements'
+    | '/dashboard/physical-profile'
     | '/dashboard/profile'
     | '/dashboard/progress'
     | '/dashboard/recommendations'
     | '/admin'
     | '/dashboard'
+    | '/admin/clients/$clientId'
   id:
     | '__root__'
     | '/'
@@ -227,17 +228,17 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/signup'
-    | '/admin/attendance'
     | '/admin/clients'
-    | '/admin/evaluations'
     | '/admin/recommendations'
-    | '/dashboard/classes'
     | '/dashboard/contact'
+    | '/dashboard/measurements'
+    | '/dashboard/physical-profile'
     | '/dashboard/profile'
     | '/dashboard/progress'
     | '/dashboard/recommendations'
     | '/admin/'
     | '/dashboard/'
+    | '/admin/clients/$clientId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -336,18 +337,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardProfileRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/dashboard/physical-profile': {
+      id: '/dashboard/physical-profile'
+      path: '/physical-profile'
+      fullPath: '/dashboard/physical-profile'
+      preLoaderRoute: typeof DashboardPhysicalProfileRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/measurements': {
+      id: '/dashboard/measurements'
+      path: '/measurements'
+      fullPath: '/dashboard/measurements'
+      preLoaderRoute: typeof DashboardMeasurementsRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
     '/dashboard/contact': {
       id: '/dashboard/contact'
       path: '/contact'
       fullPath: '/dashboard/contact'
       preLoaderRoute: typeof DashboardContactRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
-    '/dashboard/classes': {
-      id: '/dashboard/classes'
-      path: '/classes'
-      fullPath: '/dashboard/classes'
-      preLoaderRoute: typeof DashboardClassesRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/admin/recommendations': {
@@ -357,13 +365,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRecommendationsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
-    '/admin/evaluations': {
-      id: '/admin/evaluations'
-      path: '/evaluations'
-      fullPath: '/admin/evaluations'
-      preLoaderRoute: typeof AdminEvaluationsRouteImport
-      parentRoute: typeof AdminRouteRoute
-    }
     '/admin/clients': {
       id: '/admin/clients'
       path: '/clients'
@@ -371,28 +372,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminClientsRouteImport
       parentRoute: typeof AdminRouteRoute
     }
-    '/admin/attendance': {
-      id: '/admin/attendance'
-      path: '/attendance'
-      fullPath: '/admin/attendance'
-      preLoaderRoute: typeof AdminAttendanceRouteImport
-      parentRoute: typeof AdminRouteRoute
+    '/admin/clients/$clientId': {
+      id: '/admin/clients/$clientId'
+      path: '/$clientId'
+      fullPath: '/admin/clients/$clientId'
+      preLoaderRoute: typeof AdminClientsClientIdRouteImport
+      parentRoute: typeof AdminClientsRoute
     }
   }
 }
 
+interface AdminClientsRouteChildren {
+  AdminClientsClientIdRoute: typeof AdminClientsClientIdRoute
+}
+
+const AdminClientsRouteChildren: AdminClientsRouteChildren = {
+  AdminClientsClientIdRoute: AdminClientsClientIdRoute,
+}
+
+const AdminClientsRouteWithChildren = AdminClientsRoute._addFileChildren(
+  AdminClientsRouteChildren,
+)
+
 interface AdminRouteRouteChildren {
-  AdminAttendanceRoute: typeof AdminAttendanceRoute
-  AdminClientsRoute: typeof AdminClientsRoute
-  AdminEvaluationsRoute: typeof AdminEvaluationsRoute
+  AdminClientsRoute: typeof AdminClientsRouteWithChildren
   AdminRecommendationsRoute: typeof AdminRecommendationsRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
-  AdminAttendanceRoute: AdminAttendanceRoute,
-  AdminClientsRoute: AdminClientsRoute,
-  AdminEvaluationsRoute: AdminEvaluationsRoute,
+  AdminClientsRoute: AdminClientsRouteWithChildren,
   AdminRecommendationsRoute: AdminRecommendationsRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
@@ -402,8 +411,9 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
 )
 
 interface DashboardRouteRouteChildren {
-  DashboardClassesRoute: typeof DashboardClassesRoute
   DashboardContactRoute: typeof DashboardContactRoute
+  DashboardMeasurementsRoute: typeof DashboardMeasurementsRoute
+  DashboardPhysicalProfileRoute: typeof DashboardPhysicalProfileRoute
   DashboardProfileRoute: typeof DashboardProfileRoute
   DashboardProgressRoute: typeof DashboardProgressRoute
   DashboardRecommendationsRoute: typeof DashboardRecommendationsRoute
@@ -411,8 +421,9 @@ interface DashboardRouteRouteChildren {
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
-  DashboardClassesRoute: DashboardClassesRoute,
   DashboardContactRoute: DashboardContactRoute,
+  DashboardMeasurementsRoute: DashboardMeasurementsRoute,
+  DashboardPhysicalProfileRoute: DashboardPhysicalProfileRoute,
   DashboardProfileRoute: DashboardProfileRoute,
   DashboardProgressRoute: DashboardProgressRoute,
   DashboardRecommendationsRoute: DashboardRecommendationsRoute,
