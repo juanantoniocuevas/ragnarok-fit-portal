@@ -3,12 +3,9 @@ import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { LayoutDashboard, TrendingUp, CalendarCheck, MessageSquare, Phone, LogOut, User } from "lucide-react";
+import { LayoutDashboard, User, Ruler, ClipboardPlus, TrendingUp, MessageSquare, Phone, LogOut, UserCircle } from "lucide-react";
 
-export const Route = createFileRoute("/dashboard")({
-  ssr: false,
-  component: DashboardLayout,
-});
+export const Route = createFileRoute("/dashboard")({ ssr: false, component: DashboardLayout });
 
 function DashboardLayout() {
   const { user, role, loading, signOut } = useAuth();
@@ -21,17 +18,17 @@ function DashboardLayout() {
     else if (role === "trainer") navigate({ to: "/admin" });
   }, [user, role, loading, navigate]);
 
-  if (loading || !user || role !== "client") {
+  if (loading || !user || role !== "client")
     return <div className="flex min-h-screen items-center justify-center text-muted-foreground">Cargando...</div>;
-  }
 
   const links = [
     { to: "/dashboard", label: "Inicio", icon: LayoutDashboard, exact: true },
+    { to: "/dashboard/physical-profile", label: "Perfil Físico", icon: User },
+    { to: "/dashboard/measurements", label: "Mediciones", icon: Ruler },
     { to: "/dashboard/progress", label: "Mi Progreso", icon: TrendingUp },
-    { to: "/dashboard/classes", label: "Mis Clases", icon: CalendarCheck },
     { to: "/dashboard/recommendations", label: "Recomendaciones", icon: MessageSquare },
     { to: "/dashboard/contact", label: "Contactar", icon: Phone },
-    { to: "/dashboard/profile", label: "Mi Perfil", icon: User },
+    { to: "/dashboard/profile", label: "Mi Cuenta", icon: UserCircle },
   ];
 
   return (
