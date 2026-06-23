@@ -306,7 +306,7 @@ function Landing() {
 
       {/* Benefits */}
       <section className="mx-auto max-w-6xl px-4 py-24">
-        <p className="eyebrow text-center">Capítulo III</p>
+        <p className="eyebrow text-center">Capítulo V</p>
         <h2 className="mt-2 text-center font-display text-4xl uppercase tracking-wide md:text-5xl">
           Tu Legado <span className="text-gold">Empieza Aquí</span>
         </h2>
@@ -337,7 +337,7 @@ function Landing() {
       <section className="relative mx-auto max-w-6xl px-4 py-24">
         <div className="absolute inset-0 knot-pattern opacity-20 dark:opacity-25" aria-hidden />
         <div className="relative">
-          <p className="eyebrow text-center">Capítulo IV</p>
+          <p className="eyebrow text-center">Capítulo V</p>
           <h2 className="mt-2 text-center font-display text-4xl uppercase tracking-wide md:text-5xl">
             Tu <span className="text-gold">Portal Personal</span>
           </h2>
