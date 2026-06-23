@@ -2,17 +2,23 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import heroBg from "@/assets/hero-warriors.png.asset.json";
-import { Activity, Heart, Shield, Sparkles, Users, MessageCircle, ClipboardCheck, TrendingUp } from "lucide-react";
+import { Activity, Heart, Shield, Sparkles, Users, MessageCircle, ClipboardCheck, TrendingUp, GraduationCap, Award, Mail, Phone } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Ragnarok Fit — Entrena como un guerrero. Vive más tiempo." },
-      { name: "description", content: "Acompañamiento personalizado para mejorar tu salud, movilidad y calidad de vida." },
+      { name: "description", content: "Acompañamiento personalizado para mejorar tu salud, movilidad y calidad de vida. Dirigido por Erner Garrido Ibarra, Magíster en Educación Física." },
     ],
   }),
   component: Landing,
 });
+
+const WHATSAPP_URL = "https://wa.me/56965612792";
+const PHONE_DISPLAY = "+56 9 6561 2792";
+const PHONE_LINK = "tel:+56965612792";
+const EMAIL = "e.garrido03@ufromail.cl";
+const EMAIL_LINK = "mailto:e.garrido03@ufromail.cl";
 
 function Landing() {
   return (
@@ -40,7 +46,6 @@ function Landing() {
         <div className="absolute inset-0 knot-pattern opacity-30 dark:opacity-40" aria-hidden />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_color-mix(in_oklab,var(--color-gold)_15%,transparent),_transparent_65%)]" aria-hidden />
 
-        {/* Side gold braids — desktop only */}
         <div className="braid-vertical absolute left-0 top-0 hidden h-full w-10 opacity-60 lg:block" aria-hidden />
         <div className="braid-vertical absolute right-0 top-0 hidden h-full w-10 opacity-60 lg:block" aria-hidden />
 
@@ -58,7 +63,10 @@ function Landing() {
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-4">
             <Link to="/login" className="btn-primary">Ingresar a Mi Cuenta</Link>
-            <a href="#camino" className="btn-secondary">Conocer el Programa</a>
+            <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="btn-secondary">
+              <MessageCircle className="mr-2 h-5 w-5" /> Hablar por WhatsApp
+            </a>
+            <a href="#coach" className="btn-secondary">Conocer al Coach</a>
           </div>
         </div>
       </section>
@@ -95,9 +103,104 @@ function Landing() {
 
       <div className="runic-divider mx-auto max-w-3xl" />
 
+      {/* Coach / Fundador */}
+      <section id="coach" className="relative mx-auto max-w-6xl px-4 py-24">
+        <div className="absolute inset-0 knot-pattern opacity-20 dark:opacity-30" aria-hidden />
+        <div className="relative">
+          <p className="eyebrow text-center">Capítulo II · Fundador</p>
+          <h2 className="mt-2 text-center font-display text-4xl uppercase tracking-wide md:text-5xl">
+            Conoce a tu <span className="text-gold">Coach</span>
+          </h2>
+          <p className="mx-auto mt-3 max-w-2xl text-center font-body text-lg italic text-muted-foreground">
+            Detrás de cada guerrero hay un guía. Detrás de Ragnarok Fit, hay un profesional dedicado a tu evolución.
+          </p>
+
+          <div className="mt-12 grid gap-8 lg:grid-cols-5">
+            {/* Portrait / Identity */}
+            <div className="surface-card surface-card-active lg:col-span-2 p-8 flex flex-col items-center text-center">
+              <div className="relative">
+                <div className="absolute -inset-2 rounded-full bg-gold/20 blur-xl" aria-hidden />
+                <div className="relative h-40 w-40 rounded-full border-2 border-gold bg-gradient-to-br from-navy to-background flex items-center justify-center font-rune text-6xl text-gold">
+                  EG
+                </div>
+              </div>
+              <p className="eyebrow mt-6">Entrenador Principal</p>
+              <h3 className="mt-2 font-display text-2xl uppercase tracking-wider text-gold">
+                Erner Garrido Ibarra
+              </h3>
+              <p className="mt-3 font-body text-base italic text-muted-foreground">
+                "Tu fuerza no se mide en kilos, se mide en años de vida con energía."
+              </p>
+
+              <div className="mt-6 w-full space-y-2 text-left">
+                <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="btn-primary w-full">
+                  <MessageCircle className="mr-2 h-5 w-5" /> WhatsApp
+                </a>
+                <a href={PHONE_LINK} className="btn-secondary w-full">
+                  <Phone className="mr-2 h-4 w-4" /> {PHONE_DISPLAY}
+                </a>
+                <a href={EMAIL_LINK} className="btn-secondary w-full text-xs">
+                  <Mail className="mr-2 h-4 w-4" /> {EMAIL}
+                </a>
+              </div>
+            </div>
+
+            {/* Credentials */}
+            <div className="lg:col-span-3 space-y-4">
+              <div className="surface-card p-6">
+                <p className="font-body text-lg leading-relaxed text-foreground/90">
+                  Más de una década formando personas que buscan recuperar movilidad, fuerza y bienestar.
+                  Mi enfoque combina <span className="text-gold font-semibold">ciencia del entrenamiento</span>,
+                  acompañamiento cercano y hábitos sostenibles para que el progreso sea <em>real y duradero</em>.
+                </p>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                {[
+                  {
+                    icon: GraduationCap,
+                    title: "Magíster en Educación Física",
+                    detail: "Mención Condición Física y Vida Saludable",
+                  },
+                  {
+                    icon: GraduationCap,
+                    title: "Profesor de Educación Física",
+                    detail: "Deportes y Recreación",
+                  },
+                  {
+                    icon: Award,
+                    title: "Kettlebell Fitness · Nivel 1",
+                    detail: "Instructor certificado",
+                  },
+                  {
+                    icon: Award,
+                    title: "Kettlebell Fitness · Nivel 2",
+                    detail: "Instructor certificado avanzado",
+                  },
+                ].map((c) => (
+                  <div key={c.title} className="surface-card p-5">
+                    <div className="flex items-start gap-3">
+                      <div className="rounded-md border border-gold/40 bg-gold/10 p-2">
+                        <c.icon className="h-5 w-5 text-gold" />
+                      </div>
+                      <div>
+                        <h4 className="font-display text-sm uppercase tracking-wider text-foreground">{c.title}</h4>
+                        <p className="mt-1 font-body text-sm text-muted-foreground">{c.detail}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="runic-divider mx-auto max-w-3xl" />
+
       {/* Benefits */}
       <section className="mx-auto max-w-6xl px-4 py-24">
-        <p className="eyebrow text-center">Capítulo II</p>
+        <p className="eyebrow text-center">Capítulo III</p>
         <h2 className="mt-2 text-center font-display text-4xl uppercase tracking-wide md:text-5xl">
           Tu Legado <span className="text-gold">Empieza Aquí</span>
         </h2>
@@ -128,15 +231,15 @@ function Landing() {
       <section className="relative mx-auto max-w-6xl px-4 py-24">
         <div className="absolute inset-0 knot-pattern opacity-20 dark:opacity-25" aria-hidden />
         <div className="relative">
-          <p className="eyebrow text-center">Capítulo III</p>
+          <p className="eyebrow text-center">Capítulo IV</p>
           <h2 className="mt-2 text-center font-display text-4xl uppercase tracking-wide md:text-5xl">
             Tu <span className="text-gold">Portal Personal</span>
           </h2>
           <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {[
               { i: TrendingUp, t: "Tu progreso", d: "Peso, grasa y masa muscular en gráficos claros." },
-              { i: ClipboardCheck, t: "Historial completo", d: "Cada evaluación queda registrada." },
-              { i: Users, t: "Asistencias", d: "Registro mensual de tus clases." },
+              { i: ClipboardCheck, t: "Historial completo", d: "Cada medición queda registrada." },
+              { i: Users, t: "Perfil físico", d: "Tus datos base y objetivos." },
               { i: MessageCircle, t: "Recomendaciones", d: "Mensajes directos de tu entrenador." },
             ].map((b) => (
               <div key={b.t} className="surface-card p-6">
@@ -150,23 +253,45 @@ function Landing() {
       </section>
 
       {/* Contact */}
-      <section className="mx-auto max-w-3xl px-4 py-24 text-center">
+      <section id="contacto" className="mx-auto max-w-3xl px-4 py-24 text-center">
         <p className="eyebrow">Contacto</p>
         <h2 className="mt-2 font-display text-4xl uppercase tracking-wide md:text-5xl">
-          Habla con <span className="text-gold">Nosotros</span>
+          Habla con <span className="text-gold">Erner</span>
         </h2>
-        <p className="mt-3 font-body text-lg italic text-muted-foreground">¿Listo para comenzar? Escríbenos directamente.</p>
+        <p className="mt-3 font-body text-lg italic text-muted-foreground">
+          ¿Listo para comenzar? Escríbeme directamente y conversemos sobre tu objetivo.
+        </p>
         <div className="mt-8 flex flex-wrap justify-center gap-4">
-          <a href="https://wa.me/56912345678" target="_blank" rel="noreferrer" className="btn-primary">
+          <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="btn-primary">
             <MessageCircle className="mr-2 h-5 w-5" /> WhatsApp
           </a>
-          <Link to="/login" className="btn-secondary">Mi Cuenta</Link>
+          <a href={PHONE_LINK} className="btn-secondary">
+            <Phone className="mr-2 h-4 w-4" /> {PHONE_DISPLAY}
+          </a>
+          <a href={EMAIL_LINK} className="btn-secondary">
+            <Mail className="mr-2 h-4 w-4" /> Correo
+          </a>
         </div>
       </section>
 
-      <footer className="border-t border-border py-8 text-center text-sm text-muted-foreground">
+      <footer className="border-t border-border py-10 text-center text-sm text-muted-foreground">
         <Logo className="mx-auto mb-3 h-16 w-auto" />
-        © {new Date().getFullYear()} Ragnarok Fit. Todos los derechos reservados.
+        <p className="font-display uppercase tracking-wider text-foreground">Erner Garrido Ibarra</p>
+        <p className="mt-1 text-xs">Magíster en Educación Física · Instructor Kettlebell Nivel 1 y 2</p>
+        <div className="mt-4 flex flex-wrap justify-center gap-3">
+          <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-gold hover:underline">
+            <MessageCircle className="h-4 w-4" /> WhatsApp
+          </a>
+          <span className="opacity-40">·</span>
+          <a href={PHONE_LINK} className="inline-flex items-center gap-1 text-gold hover:underline">
+            <Phone className="h-4 w-4" /> {PHONE_DISPLAY}
+          </a>
+          <span className="opacity-40">·</span>
+          <a href={EMAIL_LINK} className="inline-flex items-center gap-1 text-gold hover:underline">
+            <Mail className="h-4 w-4" /> {EMAIL}
+          </a>
+        </div>
+        <p className="mt-6">© {new Date().getFullYear()} Ragnarok Fit. Todos los derechos reservados.</p>
       </footer>
     </div>
   );
