@@ -103,11 +103,117 @@ function Landing() {
 
       <div className="runic-divider mx-auto max-w-3xl" />
 
+      {/* Filosofía — narrativa de misión y visión */}
+      <section id="filosofia" className="relative overflow-hidden py-28">
+        <div className="absolute inset-0 knot-pattern opacity-20 dark:opacity-30" aria-hidden />
+        <div className="braid-vertical absolute left-0 top-0 hidden h-full w-8 opacity-50 lg:block" aria-hidden />
+        <div className="braid-vertical absolute right-0 top-0 hidden h-full w-8 opacity-50 lg:block" aria-hidden />
+
+        <div className="relative mx-auto max-w-6xl px-4">
+          <p className="eyebrow text-center">Capítulo II · Filosofía</p>
+          <h2 className="mt-2 text-center font-rune text-5xl leading-none text-gold md:text-6xl">
+            Cada guerrero tiene su <span className="italic">propia batalla</span>.
+          </h2>
+          <p className="mx-auto mt-6 max-w-3xl text-center font-body text-xl italic text-foreground/85">
+            No entrenamos cuerpos en serie. Forjamos historias únicas — una a una, con paciencia de herrero
+            y mirada de estratega.
+          </p>
+
+          {/* Cuatro versos */}
+          <div className="mt-16 grid gap-6 md:grid-cols-2">
+            {[
+              {
+                icon: Compass,
+                verse: "Tu camino, tu ritmo.",
+                body: "Edad, condición, historia y objetivos: nada se asume. Cada plan se diseña sobre quien eres hoy, no sobre quien debería ser otro.",
+              },
+              {
+                icon: HandHeart,
+                verse: "Nunca entrenas solo.",
+                body: "Detrás de cada repetición hay un guía que conoce tu nombre, tus límites y tus victorias pequeñas. El acompañamiento es la verdadera técnica.",
+              },
+              {
+                icon: Mountain,
+                verse: "El progreso se construye paso a paso.",
+                body: "No prometemos milagros en treinta días. Prometemos hábitos que aún estarán contigo en treinta años.",
+              },
+              {
+                icon: InfinityIcon,
+                verse: "Entrenar para toda la vida.",
+                body: "Movilidad, fuerza, descanso, mente clara. Lo que entrenamos hoy es la libertad de mañana.",
+              },
+            ].map((v) => (
+              <div key={v.verse} className="surface-card surface-card-active p-7">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-md border border-gold/40 bg-gold/10 p-2">
+                    <v.icon className="h-5 w-5 text-gold" />
+                  </div>
+                  <h3 className="font-display text-lg uppercase tracking-wider text-foreground">{v.verse}</h3>
+                </div>
+                <p className="mt-4 font-body text-base leading-relaxed text-muted-foreground">{v.body}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Manifiesto inclusión */}
+          <div className="relative mt-20 overflow-hidden rounded-lg border border-gold/30 bg-gradient-to-br from-background via-background/90 to-background p-10 md:p-14">
+            <div className="absolute inset-0 knot-pattern opacity-15" aria-hidden />
+            <div className="relative grid gap-10 lg:grid-cols-5 lg:items-center">
+              <div className="lg:col-span-3">
+                <p className="eyebrow">El salón de todos</p>
+                <h3 className="mt-3 font-rune text-4xl leading-tight text-gold md:text-5xl">
+                  La fuerza no tiene <span className="italic">edad, género ni forma</span>.
+                </h3>
+                <p className="mt-5 font-body text-lg italic text-foreground/85">
+                  Mujeres recuperando su poder. Hombres reaprendiendo a moverse. Adultos mayores ganando años con
+                  energía. Jóvenes encontrando disciplina. Niños descubriendo el juego del cuerpo. Personas con
+                  discapacidad entrenando sin barreras.
+                </p>
+                <p className="mt-4 font-body text-base text-muted-foreground">
+                  En Ragnarok Fit cabe cualquier guerrero que decida empezar. La comunidad se construye con todos
+                  o no se construye.
+                </p>
+              </div>
+              <div className="grid grid-cols-3 gap-3 lg:col-span-2">
+                {[
+                  { i: Users, t: "Mujeres" },
+                  { i: Shield, t: "Hombres" },
+                  { i: Heart, t: "Mayores" },
+                  { i: Flame, t: "Jóvenes" },
+                  { i: Baby, t: "Niños" },
+                  { i: Accessibility, t: "Inclusión real" },
+                ].map((g) => (
+                  <div key={g.t} className="surface-card flex flex-col items-center justify-center gap-2 p-4 text-center">
+                    <g.i className="h-6 w-6 text-gold" />
+                    <span className="font-display text-xs uppercase tracking-wider">{g.t}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Cierre — referente comunitario */}
+          <div className="mt-20 text-center">
+            <Footprints className="mx-auto h-8 w-8 text-gold" aria-hidden />
+            <p className="mx-auto mt-6 max-w-2xl font-rune text-3xl leading-snug text-foreground md:text-4xl">
+              La fuerza nace de la <span className="text-gold">constancia</span>.
+            </p>
+            <p className="mx-auto mt-4 max-w-2xl font-body text-base italic text-muted-foreground">
+              Y la constancia se contagia. Por eso Ragnarok Fit no quiere ser un gimnasio más — quiere ser el lugar
+              donde la comunidad recuerda cómo cuidarse a sí misma.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div className="runic-divider mx-auto max-w-3xl" />
+
       {/* Coach / Fundador */}
       <section id="coach" className="relative mx-auto max-w-6xl px-4 py-24">
         <div className="absolute inset-0 knot-pattern opacity-20 dark:opacity-30" aria-hidden />
         <div className="relative">
-          <p className="eyebrow text-center">Capítulo II · Fundador</p>
+          <p className="eyebrow text-center">Capítulo III · Fundador</p>
+
           <h2 className="mt-2 text-center font-display text-4xl uppercase tracking-wide md:text-5xl">
             Conoce a tu <span className="text-gold">Coach</span>
           </h2>
