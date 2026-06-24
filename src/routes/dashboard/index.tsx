@@ -12,7 +12,22 @@ function DashHome() {
   const [phys, setPhys] = useState<any>(null);
   const [measurements, setMeasurements] = useState<any[]>([]);
   const [latestRec, setLatestRec] = useState<string | null>(null);
+  const [invites, setInvites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const loadInvites = async () => {
+    if (!user) return;
+    const { data: links } = await supabase
+      .from("trainer_clients")
+      .select("id, trainer_id, created_at")
+      .eq("client_id", user.id)
+      .is("accepted_at", null);
+    const ids = (links ?? []).map((l: any) => l.trainer_id);
+    if (ids.length === 0) return setInvites([]);
+    const { data: profs } = await supabase.from("profiles").select("id, full_name, email").in("id", ids);
+    const byId = new Map((profs ?? []).map((p: any) => [p.id, p]));
+    setInvites((links ?? []).map((l: any) => ({ ...l, trainer: byId.get(l.trainer_id) })));
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -25,9 +40,19 @@ function DashHome() {
       ]);
       setProfile(p.data); setPhys(ph.data); setMeasurements(m.data ?? []);
       setLatestRec(r.data?.[0]?.content ?? null);
+      await loadInvites();
       setLoading(false);
     })();
   }, [user]);
+
+  const acceptInvite = async (id: string) => {
+    await supabase.from("trainer_clients").update({ accepted_at: new Date().toISOString() }).eq("id", id);
+    loadInvites();
+  };
+  const declineInvite = async (id: string) => {
+    await supabase.from("trainer_clients").delete().eq("id", id);
+    loadInvites();
+  };
 
   const latest = measurements[measurements.length - 1];
   const prev = measurements[measurements.length - 2];
@@ -42,6 +67,20 @@ function DashHome() {
         <h1 className="font-display text-3xl font-bold">Hola, {profile?.full_name?.split(" ")[0] ?? ""}</h1>
         <p className="text-muted-foreground">Aquí está tu resumen actual.</p>
       </div>
+
+      {invites.map((inv) => (
+        <div key={inv.id} className="surface-card surface-card-active p-6">
+          <p className="font-display text-lg">Invitación de preparador</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            <strong className="text-foreground">{inv.trainer?.full_name ?? inv.trainer?.email}</strong> te invita a ser su cliente.
+            Al aceptar podrá ver tu perfil físico, mediciones y enviarte recomendaciones.
+          </p>
+          <div className="mt-4 flex gap-3">
+            <button onClick={() => acceptInvite(inv.id)} className="btn-primary">Aceptar</button>
+            <button onClick={() => declineInvite(inv.id)} className="btn-secondary">Rechazar</button>
+          </div>
+        </div>
+      ))}
 
       {!phys?.height_cm && (
         <div className="surface-card surface-card-active p-6">
