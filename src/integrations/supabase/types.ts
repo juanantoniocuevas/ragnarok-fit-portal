@@ -175,21 +175,27 @@ export type Database = {
       }
       trainer_clients: {
         Row: {
+          accepted_at: string | null
           client_id: string
           created_at: string
           id: string
+          requested_by: string | null
           trainer_id: string
         }
         Insert: {
+          accepted_at?: string | null
           client_id: string
           created_at?: string
           id?: string
+          requested_by?: string | null
           trainer_id: string
         }
         Update: {
+          accepted_at?: string | null
           client_id?: string
           created_at?: string
           id?: string
+          requested_by?: string | null
           trainer_id?: string
         }
         Relationships: []

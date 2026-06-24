@@ -17,12 +17,13 @@ function Clients() {
     if (!user) return;
     const { data: links } = await supabase
       .from("trainer_clients")
-      .select("client_id, created_at")
+      .select("client_id, created_at, accepted_at")
       .eq("trainer_id", user.id);
     const ids = (links ?? []).map((l: any) => l.client_id);
     if (ids.length === 0) return setRows([]);
     const { data: profiles } = await supabase.from("profiles").select("*").in("id", ids);
-    setRows(profiles ?? []);
+    const byId = new Map((profiles ?? []).map((p: any) => [p.id, p]));
+    setRows((links ?? []).map((l: any) => ({ ...byId.get(l.client_id), accepted_at: l.accepted_at })));
   };
   useEffect(() => { load(); }, [user]);
 
@@ -36,13 +37,15 @@ function Clients() {
       setAssigning(false);
       return toast.error("No existe un usuario con ese correo. Pídele registrarse primero.");
     }
-    const { error } = await supabase.from("trainer_clients").insert({ trainer_id: user.id, client_id: prof.id });
+    const { error } = await supabase
+      .from("trainer_clients")
+      .insert({ trainer_id: user.id, client_id: prof.id, requested_by: user.id });
     setAssigning(false);
     if (error) {
-      if (error.code === "23505") return toast.error("Ese cliente ya está asignado a ti.");
+      if (error.code === "23505") return toast.error("Ya enviaste una invitación a este cliente.");
       return toast.error(error.message);
     }
-    toast.success(`${prof.full_name} asignado correctamente.`);
+    toast.success(`Invitación enviada a ${prof.full_name}. Debe aceptarla desde su panel.`);
     setEmailToAssign("");
     load();
   };
@@ -62,11 +65,12 @@ function Clients() {
       <h1 className="font-display text-3xl font-bold">Mis Clientes</h1>
 
       <form onSubmit={assign} className="surface-card flex flex-col gap-3 p-6 sm:flex-row">
-        <input required type="email" placeholder="Correo del cliente a asignar" value={emailToAssign}
+        <input required type="email" placeholder="Correo del cliente a invitar" value={emailToAssign}
           onChange={(e) => setEmailToAssign(e.target.value)}
           className="h-12 flex-1 rounded-md border border-border bg-input/30 px-3 outline-none focus:border-gold" />
-        <button disabled={assigning} className="btn-primary">{assigning ? "Asignando..." : "Asignar cliente"}</button>
+        <button disabled={assigning} className="btn-primary">{assigning ? "Enviando..." : "Enviar invitación"}</button>
       </form>
+      <p className="text-xs text-muted-foreground -mt-3">El cliente debe aceptar la invitación desde su panel antes de que puedas ver sus datos.</p>
 
       <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar en mis clientes..."
         className="h-12 w-full rounded-md border border-border bg-input/30 px-3 outline-none focus:border-gold" />
@@ -75,18 +79,26 @@ function Clients() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-background/40 text-left text-muted-foreground">
-              <tr><th className="p-4">Nombre</th><th className="p-4">Correo</th><th className="p-4">Teléfono</th><th className="p-4"></th></tr>
+              <tr><th className="p-4">Nombre</th><th className="p-4">Correo</th><th className="p-4">Estado</th><th className="p-4"></th></tr>
             </thead>
             <tbody>
               {filtered.map((r) => (
                 <tr key={r.id} className="border-t border-border">
                   <td className="p-4 font-medium">
-                    <Link to="/admin/clients/$clientId" params={{ clientId: r.id }} className="text-gold hover:underline">
-                      {r.full_name}
-                    </Link>
+                    {r.accepted_at ? (
+                      <Link to="/admin/clients/$clientId" params={{ clientId: r.id }} className="text-gold hover:underline">
+                        {r.full_name}
+                      </Link>
+                    ) : (
+                      <span>{r.full_name}</span>
+                    )}
                   </td>
                   <td className="p-4 text-muted-foreground">{r.email}</td>
-                  <td className="p-4 text-muted-foreground">{r.phone ?? "—"}</td>
+                  <td className="p-4">
+                    {r.accepted_at
+                      ? <span className="text-vitality">Aceptado</span>
+                      : <span className="text-muted-foreground italic">Pendiente</span>}
+                  </td>
                   <td className="p-4 text-right">
                     <button onClick={() => unassign(r.id)} className="text-sm text-destructive hover:underline">Quitar</button>
                   </td>
