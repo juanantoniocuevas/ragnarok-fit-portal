@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import heroBg from "@/assets/hero-warriors.png.asset.json";
-import { Activity, Heart, Shield, Sparkles, Users, MessageCircle, ClipboardCheck, TrendingUp, GraduationCap, Award, Mail, Phone, Footprints, HandHeart, Infinity as InfinityIcon, Compass, Flame, Mountain, Accessibility, Baby } from "lucide-react";
+import { Activity, Heart, Shield, Sparkles, Users, MessageCircle, ClipboardCheck, TrendingUp, GraduationCap, Award, Mail, Phone, Footprints, HandHeart, Infinity as InfinityIcon, Compass, Flame, Mountain, Accessibility, Baby, Apple, Salad } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -60,6 +60,9 @@ function Landing() {
           </h2>
           <p className="mx-auto mt-8 max-w-2xl font-body text-lg italic text-foreground/85 md:text-xl">
             Ragnarok Fit — acompañamiento personalizado para mejorar tu salud, movilidad y calidad de vida.
+          </p>
+          <p className="mx-auto mt-3 max-w-2xl font-display text-sm uppercase tracking-[0.25em] text-gold/90 md:text-base">
+            Acompañamiento profesional en entrenamiento físico y nutrición deportiva.
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-4">
             <Link to="/login" className="btn-primary">Ingresar a Mi Cuenta</Link>
@@ -299,6 +302,83 @@ function Landing() {
               </div>
             </div>
           </div>
+
+          {/* Equipo de Apoyo — Nutrición */}
+          <div className="mt-16">
+            <div className="mb-6 flex items-center gap-4">
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gold/40 to-gold/40" aria-hidden />
+              <p className="eyebrow whitespace-nowrap">Equipo de Apoyo</p>
+              <div className="h-px flex-1 bg-gradient-to-l from-transparent via-gold/40 to-gold/40" aria-hidden />
+            </div>
+
+            <div className="surface-card surface-card-active overflow-hidden">
+              <div className="grid gap-0 lg:grid-cols-5">
+                {/* Identidad */}
+                <div className="relative flex flex-col items-center justify-center border-b border-border/60 bg-gradient-to-br from-navy/30 via-background to-background p-8 text-center lg:col-span-2 lg:border-b-0 lg:border-r">
+                  <div className="absolute inset-0 knot-pattern opacity-20" aria-hidden />
+                  <div className="relative">
+                    <div className="absolute -inset-2 rounded-full bg-gold/20 blur-xl" aria-hidden />
+                    <div className="relative h-28 w-28 rounded-full border-2 border-gold bg-gradient-to-br from-navy to-background flex items-center justify-center font-rune text-4xl text-gold">
+                      CE
+                    </div>
+                  </div>
+                  <p className="eyebrow mt-5">Nutrición Deportiva</p>
+                  <h3 className="mt-2 font-display text-xl uppercase tracking-wider text-gold">
+                    Carolina Espinoza Calfullán
+                  </h3>
+                  <p className="mt-2 font-body text-sm italic text-muted-foreground">
+                    Nutricionista — Universidad de La Frontera
+                  </p>
+                  <a
+                    href="https://wa.me/56991490823?text=Hola%20Carolina,%20le%20hablo%20desde%20Ragnarok%20Fit.%20Me%20gustar%C3%ADa%20agendar%20una%20evaluaci%C3%B3n%20nutricional."
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn-primary mt-6 w-full"
+                  >
+                    <MessageCircle className="mr-2 h-5 w-5" /> Agendar Evaluación Nutricional
+                  </a>
+                </div>
+
+                {/* Detalles */}
+                <div className="p-7 lg:col-span-3">
+                  <p className="font-body text-base leading-relaxed text-foreground/90">
+                    Apoya a los miembros de Ragnarok Fit con <span className="text-gold font-semibold">evaluación nutricional</span>,
+                    composición corporal, antropometría, bioimpedancia y planes de alimentación personalizados orientados
+                    a mejorar salud, rendimiento y calidad de vida.
+                  </p>
+
+                  <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <Salad className="h-4 w-4 text-gold" />
+                        <h4 className="font-display text-xs uppercase tracking-wider">Especialidades</h4>
+                      </div>
+                      <ul className="mt-2 space-y-1 font-body text-sm text-muted-foreground">
+                        <li>• Nutrición deportiva</li>
+                        <li>• Composición corporal</li>
+                        <li>• Obesidad infantil</li>
+                        <li>• Nutrición escolar</li>
+                        <li>• Adulto mayor y rehabilitación</li>
+                        <li>• Enfermedades crónicas</li>
+                        <li>• Alimentación en TEA</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <Award className="h-4 w-4 text-gold" />
+                        <h4 className="font-display text-xs uppercase tracking-wider">Credenciales</h4>
+                      </div>
+                      <ul className="mt-2 space-y-1 font-body text-sm text-muted-foreground">
+                        <li>• Diplomado en Nutrición Deportiva</li>
+                        <li>• Diplomado en Obesidad Infantil</li>
+                        <li>• Diplomado en Sarcopenia y Fragilidad Muscular</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -320,7 +400,7 @@ function Landing() {
             { i: Heart, t: "Equilibrio", d: "Previene caídas y gana confianza." },
             { i: Sparkles, t: "Independencia", d: "Mantén autonomía toda la vida." },
             { i: TrendingUp, t: "Calidad de vida", d: "Más energía, mejor descanso." },
-            { i: Users, t: "Apoyo profesional", d: "Un equipo que te acompaña." },
+            { i: Users, t: "Apoyo multidisciplinario", d: "Entrenamiento y nutrición trabajando juntos para ayudarte a construir hábitos sostenibles y resultados duraderos." },
           ].map((b) => (
             <div key={b.t} className="surface-card p-6">
               <b.i className="h-8 w-8 text-gold" />
