@@ -61,6 +61,9 @@ function Landing() {
           <p className="mx-auto mt-8 max-w-2xl font-body text-lg italic text-foreground/85 md:text-xl">
             Ragnarok Fit — acompañamiento personalizado para mejorar tu salud, movilidad y calidad de vida.
           </p>
+          <p className="mx-auto mt-3 max-w-2xl font-display text-sm uppercase tracking-[0.25em] text-gold/90 md:text-base">
+            Acompañamiento profesional en entrenamiento físico y nutrición deportiva.
+          </p>
           <div className="mt-10 flex flex-wrap justify-center gap-4">
             <Link to="/login" className="btn-primary">Ingresar a Mi Cuenta</Link>
             <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="btn-secondary">
