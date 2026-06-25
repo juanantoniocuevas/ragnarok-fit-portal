@@ -181,7 +181,7 @@ function Landing() {
                 {[
                   { i: Users, t: "Mujeres" },
                   { i: Shield, t: "Hombres" },
-                  { i: Heart, t: "Mayores" },
+                  { i: Heart, t: "Vida Activa" },
                   { i: Flame, t: "Jóvenes" },
                   { i: Baby, t: "Niños" },
                   { i: Accessibility, t: "Inclusión real" },
