@@ -3,7 +3,7 @@ import { MessageCircle, Phone, Mail, GraduationCap, Award } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard/contact")({ component: Contact });
 
-const WHATSAPP_URL = "https://wa.me/56965612792";
+const WHATSAPP_URL = "https://wa.me/56965612792?text=Hola%20Erner,%20le%20hablo%20desde%20Ragnarok%20Fit.";
 const PHONE_DISPLAY = "+56 9 6561 2792";
 const PHONE_LINK = "tel:+56965612792";
 const EMAIL = "e.garrido03@ufromail.cl";
