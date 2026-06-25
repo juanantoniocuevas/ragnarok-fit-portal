@@ -400,7 +400,7 @@ function Landing() {
             { i: Heart, t: "Equilibrio", d: "Previene caídas y gana confianza." },
             { i: Sparkles, t: "Independencia", d: "Mantén autonomía toda la vida." },
             { i: TrendingUp, t: "Calidad de vida", d: "Más energía, mejor descanso." },
-            { i: Users, t: "Apoyo profesional", d: "Un equipo que te acompaña." },
+            { i: Users, t: "Apoyo multidisciplinario", d: "Entrenamiento y nutrición trabajando juntos para ayudarte a construir hábitos sostenibles y resultados duraderos." },
           ].map((b) => (
             <div key={b.t} className="surface-card p-6">
               <b.i className="h-8 w-8 text-gold" />
