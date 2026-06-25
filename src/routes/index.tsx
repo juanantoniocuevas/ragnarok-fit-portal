@@ -168,9 +168,9 @@ function Landing() {
                   La fuerza no tiene <span className="italic">edad, género ni forma</span>.
                 </h3>
                 <p className="mt-5 font-body text-lg italic text-foreground/85">
-                  Mujeres recuperando su poder. Hombres reaprendiendo a moverse. Adultos mayores ganando años con
-                  energía. Jóvenes encontrando disciplina. Niños descubriendo el juego del cuerpo. Personas con
-                  discapacidad entrenando sin barreras.
+                  Mujeres recuperando su poder. Hombres reaprendiendo a moverse. Personas construyendo una vida
+                  activa y autónoma. Jóvenes encontrando disciplina. Niños descubriendo el juego del cuerpo.
+                  Personas con discapacidad entrenando sin barreras.
                 </p>
                 <p className="mt-4 font-body text-base text-muted-foreground">
                   En Ragnarok Fit cabe cualquier guerrero que decida empezar. La comunidad se construye con todos
@@ -181,7 +181,7 @@ function Landing() {
                 {[
                   { i: Users, t: "Mujeres" },
                   { i: Shield, t: "Hombres" },
-                  { i: Heart, t: "Mayores" },
+                  { i: Heart, t: "Vida Activa" },
                   { i: Flame, t: "Jóvenes" },
                   { i: Baby, t: "Niños" },
                   { i: Accessibility, t: "Inclusión real" },
@@ -358,7 +358,7 @@ function Landing() {
                         <li>• Composición corporal</li>
                         <li>• Obesidad infantil</li>
                         <li>• Nutrición escolar</li>
-                        <li>• Adulto mayor y rehabilitación</li>
+                        <li>• Longevidad activa y rehabilitación</li>
                         <li>• Enfermedades crónicas</li>
                         <li>• Alimentación en TEA</li>
                       </ul>
