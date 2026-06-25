@@ -168,9 +168,9 @@ function Landing() {
                   La fuerza no tiene <span className="italic">edad, género ni forma</span>.
                 </h3>
                 <p className="mt-5 font-body text-lg italic text-foreground/85">
-                  Mujeres recuperando su poder. Hombres reaprendiendo a moverse. Adultos mayores ganando años con
-                  energía. Jóvenes encontrando disciplina. Niños descubriendo el juego del cuerpo. Personas con
-                  discapacidad entrenando sin barreras.
+                  Mujeres recuperando su poder. Hombres reaprendiendo a moverse. Personas construyendo una vida
+                  activa y autónoma. Jóvenes encontrando disciplina. Niños descubriendo el juego del cuerpo.
+                  Personas con discapacidad entrenando sin barreras.
                 </p>
                 <p className="mt-4 font-body text-base text-muted-foreground">
                   En Ragnarok Fit cabe cualquier guerrero que decida empezar. La comunidad se construye con todos
