@@ -331,7 +331,7 @@ function Landing() {
                     Nutricionista — Universidad de La Frontera
                   </p>
                   <a
-                    href="https://wa.me/56991490823?text=Hola%20Carolina,%20le%20hablo%20desde%20Ragnarok%20Fit.%20Me%20gustar%C3%ADa%20agendar%20una%20evaluaci%C3%B3n%20nutricional."
+                    href={WHATSAPP_NUTRI_URL}
                     target="_blank"
                     rel="noreferrer"
                     className="btn-primary mt-6 w-full"
