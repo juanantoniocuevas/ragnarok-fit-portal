@@ -358,7 +358,7 @@ function Landing() {
                         <li>• Composición corporal</li>
                         <li>• Obesidad infantil</li>
                         <li>• Nutrición escolar</li>
-                        <li>• Adulto mayor y rehabilitación</li>
+                        <li>• Longevidad activa y rehabilitación</li>
                         <li>• Enfermedades crónicas</li>
                         <li>• Alimentación en TEA</li>
                       </ul>
