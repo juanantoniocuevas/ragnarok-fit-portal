@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import heroBg from "@/assets/hero-warriors.png.asset.json";
+const heroBg = { url: "/hero-warriors.png" };
 import { Activity, Heart, Shield, Sparkles, Users, MessageCircle, ClipboardCheck, TrendingUp, GraduationCap, Award, Mail, Phone, Footprints, HandHeart, Infinity as InfinityIcon, Compass, Flame, Mountain, Accessibility, Baby, Apple, Salad } from "lucide-react";
 
 export const Route = createFileRoute("/")({
