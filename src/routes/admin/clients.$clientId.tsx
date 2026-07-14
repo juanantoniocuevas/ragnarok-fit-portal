@@ -3,8 +3,9 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from "recharts";
-import { ACTIVITY_LABEL, GOAL_LABEL, autoRecommendations } from "@/lib/health-recommendations";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import { GOAL_LABEL, autoRecommendations } from "@/lib/health-recommendations";
+import { MEASUREMENT_FIELDS, calcIMC } from "@/lib/measurements";
 
 export const Route = createFileRoute("/admin/clients/$clientId")({ component: ClientDetail });
 
@@ -36,13 +37,11 @@ function ClientDetail() {
   const prev = measurements[measurements.length - 2];
   const autoRecs = useMemo(() => latest ? autoRecommendations(latest, prev) : [], [latest, prev]);
 
-  const chartData = measurements.map((m) => ({
-    date: new Date(m.created_at).toLocaleDateString("es-CL", { day: "2-digit", month: "short" }),
-    Peso: Number(m.weight_kg),
-    IMC: m.imc ? Number(m.imc) : null,
-    Grasa: m.body_fat_pct ? Number(m.body_fat_pct) : null,
-    Músculo: m.muscle_mass_kg ? Number(m.muscle_mass_kg) : null,
-  }));
+  const buildSeries = (key: string) =>
+    measurements.map((m) => ({
+      date: new Date(m.created_at).toLocaleDateString("es-CL", { day: "2-digit", month: "short" }),
+      value: m[key] !== null && m[key] !== undefined ? Number(m[key]) : null,
+    }));
 
   const submitRec = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,58 +94,64 @@ function ClientDetail() {
 
       {latest && (
         <section>
-          <h2 className="mb-4 font-display text-xl">Estado actual</h2>
-          <div className="grid gap-3 md:grid-cols-3 lg:grid-cols-5">
-            <Stat label="Peso" value={`${latest.weight_kg} kg`} />
-            <Stat label="IMC" value={latest.imc ?? "—"} />
-            <Stat label="% Grasa" value={latest.body_fat_pct ? `${latest.body_fat_pct}%` : "—"} />
-            <Stat label="Masa muscular" value={latest.muscle_mass_kg ? `${latest.muscle_mass_kg} kg` : "—"} />
-            <Stat label="TMB" value={latest.bmr ? `${latest.bmr} kcal` : "—"} />
+          <h2 className="mb-4 font-display text-xl">Última evaluación</h2>
+          <div className="grid gap-3 md:grid-cols-3 lg:grid-cols-4">
+            {MEASUREMENT_FIELDS.map((f) => (
+              <Stat key={f.key} label={f.short} value={latest[f.key] != null ? `${latest[f.key]} ${f.unit}` : "—"} />
+            ))}
+            <Stat label="IMC" value={calcIMC(latest.weight_kg, latest.height_cm) ?? "—"} />
           </div>
         </section>
       )}
 
-      {chartData.length >= 2 ? (
-        <section className="surface-card p-6">
+      {measurements.length >= 2 ? (
+        <section>
           <h2 className="mb-4 font-display text-xl">Evolución</h2>
-          <div className="h-72">
-            <ResponsiveContainer><LineChart data={chartData}>
-              <CartesianGrid stroke="#2D3E5F" strokeDasharray="3 3" />
-              <XAxis dataKey="date" stroke="#A0AEC0" /><YAxis stroke="#A0AEC0" />
-              <Tooltip contentStyle={{ background: "#1B2A4A", border: "1px solid #2D3E5F", borderRadius: 8 }} />
-              <Legend />
-              <Line type="monotone" dataKey="Peso" stroke="#D4A017" strokeWidth={2} />
-              <Line type="monotone" dataKey="IMC" stroke="#22c55e" strokeWidth={2} />
-              <Line type="monotone" dataKey="Grasa" stroke="#C67A45" strokeWidth={2} />
-              <Line type="monotone" dataKey="Músculo" stroke="#3b82f6" strokeWidth={2} />
-            </LineChart></ResponsiveContainer>
+          <div className="grid gap-6 md:grid-cols-2">
+            {MEASUREMENT_FIELDS.map((f) => (
+              <div key={f.key} className="surface-card p-6">
+                <h3 className="mb-3 font-display text-lg">{f.label} ({f.unit})</h3>
+                <div className="h-56">
+                  <ResponsiveContainer>
+                    <LineChart data={buildSeries(f.key)}>
+                      <CartesianGrid stroke="#2D3E5F" strokeDasharray="3 3" />
+                      <XAxis dataKey="date" stroke="#A0AEC0" />
+                      <YAxis stroke="#A0AEC0" domain={["auto", "auto"]} />
+                      <Tooltip contentStyle={{ background: "#1B2A4A", border: "1px solid #2D3E5F", borderRadius: 8 }} />
+                      <Line type="monotone" dataKey="value" stroke={f.color} strokeWidth={2} connectNulls />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
       ) : (
-        <p className="surface-card p-6 text-muted-foreground">Se requieren más mediciones para visualizar la evolución.</p>
+        <p className="surface-card p-6 text-muted-foreground">Se requieren más evaluaciones para visualizar la evolución.</p>
       )}
 
       <section className="surface-card overflow-hidden">
-        <h2 className="border-b border-border p-6 font-display text-xl">Historial de mediciones</h2>
+        <h2 className="border-b border-border p-6 font-display text-xl">Historial de evaluaciones</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-background/40 text-left text-muted-foreground">
-              <tr><th className="p-3">Fecha</th><th className="p-3">Peso</th><th className="p-3">IMC</th><th className="p-3">%Grasa</th><th className="p-3">Músc.</th><th className="p-3">Magra</th><th className="p-3">TMB</th><th className="p-3">Visceral</th><th className="p-3">Agua</th><th className="p-3">Cintura</th><th className="p-3">Cuello</th><th className="p-3">Cadera</th><th className="p-3">Act.</th></tr>
+              <tr>
+                <th className="p-3">Fecha</th>
+                {MEASUREMENT_FIELDS.map((f) => <th key={f.key} className="p-3">{f.short}</th>)}
+                <th className="p-3">IMC</th>
+              </tr>
             </thead>
             <tbody>
               {measurements.slice().reverse().map((m) => (
                 <tr key={m.id} className="border-t border-border">
                   <td className="p-3">{new Date(m.created_at).toLocaleString("es-CL")}</td>
-                  <td className="p-3">{m.weight_kg}</td><td className="p-3">{m.imc ?? "—"}</td>
-                  <td className="p-3">{m.body_fat_pct ?? "—"}</td><td className="p-3">{m.muscle_mass_kg ?? "—"}</td>
-                  <td className="p-3">{m.lean_mass_kg ?? "—"}</td><td className="p-3">{m.bmr ?? "—"}</td>
-                  <td className="p-3">{m.visceral_fat ?? "—"}</td><td className="p-3">{m.water_pct ?? "—"}</td>
-                  <td className="p-3">{m.waist_cm}</td><td className="p-3">{m.neck_cm}</td>
-                  <td className="p-3">{m.hip_cm ?? "—"}</td>
-                  <td className="p-3 text-muted-foreground">{ACTIVITY_LABEL[m.activity_level]}</td>
+                  {MEASUREMENT_FIELDS.map((f) => <td key={f.key} className="p-3">{m[f.key] ?? "—"}</td>)}
+                  <td className="p-3">{calcIMC(m.weight_kg, m.height_cm) ?? "—"}</td>
                 </tr>
               ))}
-              {measurements.length === 0 && <tr><td colSpan={13} className="p-8 text-center text-muted-foreground">Sin mediciones aún.</td></tr>}
+              {measurements.length === 0 && (
+                <tr><td colSpan={MEASUREMENT_FIELDS.length + 2} className="p-8 text-center text-muted-foreground">Sin evaluaciones aún.</td></tr>
+              )}
             </tbody>
           </table>
         </div>

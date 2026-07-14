@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { autoRecommendations } from "@/lib/health-recommendations";
+import { MEASUREMENT_FIELDS, calcIMC } from "@/lib/measurements";
 
 export const Route = createFileRoute("/dashboard/")({ component: DashHome });
 
@@ -73,7 +74,6 @@ function DashHome() {
           <p className="font-display text-lg">Invitación de preparador</p>
           <p className="mt-1 text-sm text-muted-foreground">
             <strong className="text-foreground">{inv.trainer?.full_name ?? inv.trainer?.email}</strong> te invita a ser su cliente.
-            Al aceptar podrá ver tu perfil físico, mediciones y enviarte recomendaciones.
           </p>
           <div className="mt-4 flex gap-3">
             <button onClick={() => acceptInvite(inv.id)} className="btn-primary">Aceptar</button>
@@ -82,29 +82,27 @@ function DashHome() {
         </div>
       ))}
 
-      {!phys?.height_cm && (
+      {!phys && (
         <div className="surface-card surface-card-active p-6">
-          <p>Completa tu <Link to="/dashboard/physical-profile" className="text-gold underline">perfil físico</Link> para activar los cálculos automáticos.</p>
+          <p>Completa tu <Link to="/dashboard/physical-profile" className="text-gold underline">perfil físico</Link>.</p>
         </div>
       )}
-      {phys?.height_cm && measurements.length === 0 && (
+      {phys && measurements.length === 0 && (
         <div className="surface-card surface-card-active p-6">
-          <p>Registra tu primera <Link to="/dashboard/measurements" className="text-gold underline">medición</Link> para empezar.</p>
+          <p>Registra tu primera <Link to="/dashboard/measurements" className="text-gold underline">evaluación</Link> para empezar.</p>
         </div>
       )}
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Stat label="Peso actual" value={latest ? `${latest.weight_kg} kg` : "—"} />
-        <Stat label="IMC" value={latest?.imc ?? "—"} />
-        <Stat label="% Grasa" value={latest?.body_fat_pct ? `${latest.body_fat_pct}%` : "—"} />
-        <Stat label="Calorías diarias" value={latest?.daily_calories ? `${Math.round(latest.daily_calories)} kcal` : "—"} />
-      </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Stat label="Masa muscular" value={latest?.muscle_mass_kg ? `${latest.muscle_mass_kg} kg` : "—"} />
-        <Stat label="Masa magra" value={latest?.lean_mass_kg ? `${latest.lean_mass_kg} kg` : "—"} />
-        <Stat label="Grasa visceral" value={latest?.visceral_fat ?? "—"} />
-        <Stat label="Cambio peso (vs anterior)" value={delta !== null ? `${delta} kg` : "—"}
-          accent={delta !== null && Number(delta) <= 0 ? "vitality" : undefined} />
+        {MEASUREMENT_FIELDS.map((f) => (
+          <Stat key={f.key} label={f.short} value={latest?.[f.key] != null ? `${latest[f.key]} ${f.unit}` : "—"} />
+        ))}
+        <Stat label="IMC" value={latest ? (calcIMC(latest.weight_kg, latest.height_cm) ?? "—") : "—"} />
+        <Stat
+          label="Cambio peso (vs anterior)"
+          value={delta !== null ? `${delta} kg` : "—"}
+          accent={delta !== null && Number(delta) <= 0 ? "vitality" : undefined}
+        />
       </div>
 
       {auto.length > 0 && (
