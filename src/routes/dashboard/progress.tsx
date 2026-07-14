@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
+import { MEASUREMENT_FIELDS, calcIMC } from "@/lib/measurements";
 
 export const Route = createFileRoute("/dashboard/progress")({ component: Progress });
 
@@ -19,46 +20,29 @@ function Progress() {
     ]).then(([m, r]) => { setRows(m.data ?? []); setRecs(r.data ?? []); });
   }, [user]);
 
-  const chart = rows.map((m) => ({
-    date: new Date(m.created_at).toLocaleDateString("es-CL", { day: "2-digit", month: "short" }),
-    Peso: Number(m.weight_kg),
-    IMC: m.imc ? Number(m.imc) : null,
-    Grasa: m.body_fat_pct ? Number(m.body_fat_pct) : null,
-    Músculo: m.muscle_mass_kg ? Number(m.muscle_mass_kg) : null,
-    Magra: m.lean_mass_kg ? Number(m.lean_mass_kg) : null,
-    Visceral: m.visceral_fat ? Number(m.visceral_fat) : null,
-  }));
-
-  // Timeline merging measurements + recs sorted desc
   const timeline = [
-    ...rows.map((m) => ({ kind: "med", at: m.created_at, data: m })),
-    ...recs.map((r) => ({ kind: "rec", at: r.created_at, data: r })),
+    ...rows.map((m) => ({ kind: "med" as const, at: m.created_at, data: m })),
+    ...recs.map((r) => ({ kind: "rec" as const, at: r.created_at, data: r })),
   ].sort((a, b) => +new Date(b.at) - +new Date(a.at));
+
+  const buildSeries = (key: string) =>
+    rows.map((m) => ({
+      date: new Date(m.created_at).toLocaleDateString("es-CL", { day: "2-digit", month: "short" }),
+      value: m[key] !== null && m[key] !== undefined ? Number(m[key]) : null,
+    }));
 
   return (
     <div className="space-y-8">
       <h1 className="font-display text-3xl font-bold">Mi Progreso</h1>
 
-      {chart.length >= 2 ? (
-        <div className="surface-card p-6">
-          <h2 className="mb-4 font-display text-xl">Evolución de tus mediciones</h2>
-          <div className="h-80">
-            <ResponsiveContainer><LineChart data={chart}>
-              <CartesianGrid stroke="#2D3E5F" strokeDasharray="3 3" />
-              <XAxis dataKey="date" stroke="#A0AEC0" /><YAxis stroke="#A0AEC0" />
-              <Tooltip contentStyle={{ background: "#1B2A4A", border: "1px solid #2D3E5F", borderRadius: 8 }} />
-              <Legend />
-              <Line type="monotone" dataKey="Peso" stroke="#D4A017" strokeWidth={2} />
-              <Line type="monotone" dataKey="IMC" stroke="#22c55e" strokeWidth={2} />
-              <Line type="monotone" dataKey="Grasa" stroke="#C67A45" strokeWidth={2} />
-              <Line type="monotone" dataKey="Músculo" stroke="#3b82f6" strokeWidth={2} />
-              <Line type="monotone" dataKey="Magra" stroke="#a855f7" strokeWidth={2} />
-              <Line type="monotone" dataKey="Visceral" stroke="#ef4444" strokeWidth={2} />
-            </LineChart></ResponsiveContainer>
-          </div>
-        </div>
+      {rows.length < 2 ? (
+        <p className="surface-card p-6 text-muted-foreground">Registra al menos dos evaluaciones para visualizar la evolución.</p>
       ) : (
-        <p className="surface-card p-6 text-muted-foreground">Se requieren más mediciones para visualizar la evolución.</p>
+        <div className="grid gap-6 md:grid-cols-2">
+          {MEASUREMENT_FIELDS.map((f) => (
+            <ChartCard key={f.key} title={`${f.label} (${f.unit})`} color={f.color} data={buildSeries(f.key)} />
+          ))}
+        </div>
       )}
 
       <div className="surface-card overflow-hidden">
@@ -69,7 +53,7 @@ function Progress() {
               <p className="text-xs text-muted-foreground">{new Date(t.at).toLocaleString("es-CL")}</p>
               {t.kind === "med" ? (
                 <p className="mt-1 text-sm">
-                  <span className="font-medium">Medición:</span> Peso {t.data.weight_kg} kg · IMC {t.data.imc ?? "—"} · %Grasa {t.data.body_fat_pct ?? "—"} · Músculo {t.data.muscle_mass_kg ?? "—"} kg
+                  <span className="font-medium">Evaluación:</span> Peso {t.data.weight_kg} kg · Estatura {t.data.height_cm ?? "—"} cm · IMC {calcIMC(t.data.weight_kg, t.data.height_cm) ?? "—"}
                 </p>
               ) : (
                 <p className="mt-1 text-sm"><span className="font-medium text-gold">Recomendación del preparador:</span> {t.data.content}</p>
@@ -78,6 +62,25 @@ function Progress() {
           ))}
           {timeline.length === 0 && <li className="p-8 text-center text-muted-foreground">Sin registros aún.</li>}
         </ol>
+      </div>
+    </div>
+  );
+}
+
+function ChartCard({ title, color, data }: { title: string; color: string; data: { date: string; value: number | null }[] }) {
+  return (
+    <div className="surface-card p-6">
+      <h2 className="mb-4 font-display text-lg">{title}</h2>
+      <div className="h-56">
+        <ResponsiveContainer>
+          <LineChart data={data}>
+            <CartesianGrid stroke="#2D3E5F" strokeDasharray="3 3" />
+            <XAxis dataKey="date" stroke="#A0AEC0" />
+            <YAxis stroke="#A0AEC0" domain={["auto", "auto"]} />
+            <Tooltip contentStyle={{ background: "#1B2A4A", border: "1px solid #2D3E5F", borderRadius: 8 }} />
+            <Line type="monotone" dataKey="value" stroke={color} strokeWidth={2} connectNulls />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );
