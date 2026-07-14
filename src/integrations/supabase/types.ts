@@ -16,68 +16,83 @@ export type Database = {
     Tables: {
       measurements: {
         Row: {
-          activity_level: string
+          activity_level: string | null
+          arm_flexed_cm: number | null
+          arm_relaxed_cm: number | null
           bmr: number | null
           body_fat_pct: number | null
+          calf_cm: number | null
           created_at: string
           daily_calories: number | null
           deleted_at: string | null
           fat_mass_kg: number | null
           healthy_weight_kg: number | null
+          height_cm: number | null
           hip_cm: number | null
           id: string
           imc: number | null
           lean_mass_kg: number | null
+          mid_thigh_cm: number | null
           muscle_mass_kg: number | null
-          neck_cm: number
+          neck_cm: number | null
           updated_at: string
           user_id: string
           visceral_fat: number | null
-          waist_cm: number
+          waist_cm: number | null
           water_pct: number | null
           weight_kg: number
         }
         Insert: {
-          activity_level: string
+          activity_level?: string | null
+          arm_flexed_cm?: number | null
+          arm_relaxed_cm?: number | null
           bmr?: number | null
           body_fat_pct?: number | null
+          calf_cm?: number | null
           created_at?: string
           daily_calories?: number | null
           deleted_at?: string | null
           fat_mass_kg?: number | null
           healthy_weight_kg?: number | null
+          height_cm?: number | null
           hip_cm?: number | null
           id?: string
           imc?: number | null
           lean_mass_kg?: number | null
+          mid_thigh_cm?: number | null
           muscle_mass_kg?: number | null
-          neck_cm: number
+          neck_cm?: number | null
           updated_at?: string
           user_id: string
           visceral_fat?: number | null
-          waist_cm: number
+          waist_cm?: number | null
           water_pct?: number | null
           weight_kg: number
         }
         Update: {
-          activity_level?: string
+          activity_level?: string | null
+          arm_flexed_cm?: number | null
+          arm_relaxed_cm?: number | null
           bmr?: number | null
           body_fat_pct?: number | null
+          calf_cm?: number | null
           created_at?: string
           daily_calories?: number | null
           deleted_at?: string | null
           fat_mass_kg?: number | null
           healthy_weight_kg?: number | null
+          height_cm?: number | null
           hip_cm?: number | null
           id?: string
           imc?: number | null
           lean_mass_kg?: number | null
+          mid_thigh_cm?: number | null
           muscle_mass_kg?: number | null
-          neck_cm?: number
+          neck_cm?: number | null
           updated_at?: string
           user_id?: string
           visceral_fat?: number | null
-          waist_cm?: number
+          waist_cm?: number | null
           water_pct?: number | null
           weight_kg?: number
         }
