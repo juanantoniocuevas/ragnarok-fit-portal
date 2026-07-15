@@ -13,22 +13,7 @@ function DashHome() {
   const [phys, setPhys] = useState<any>(null);
   const [measurements, setMeasurements] = useState<any[]>([]);
   const [latestRec, setLatestRec] = useState<string | null>(null);
-  const [invites, setInvites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const loadInvites = async () => {
-    if (!user) return;
-    const { data: links } = await supabase
-      .from("trainer_clients")
-      .select("id, trainer_id, created_at")
-      .eq("client_id", user.id)
-      .is("accepted_at", null);
-    const ids = (links ?? []).map((l: any) => l.trainer_id);
-    if (ids.length === 0) return setInvites([]);
-    const { data: profs } = await supabase.from("profiles").select("id, full_name, email").in("id", ids);
-    const byId = new Map((profs ?? []).map((p: any) => [p.id, p]));
-    setInvites((links ?? []).map((l: any) => ({ ...l, trainer: byId.get(l.trainer_id) })));
-  };
 
   useEffect(() => {
     if (!user) return;
@@ -41,19 +26,9 @@ function DashHome() {
       ]);
       setProfile(p.data); setPhys(ph.data); setMeasurements(m.data ?? []);
       setLatestRec(r.data?.[0]?.content ?? null);
-      await loadInvites();
       setLoading(false);
     })();
   }, [user]);
-
-  const acceptInvite = async (id: string) => {
-    await supabase.from("trainer_clients").update({ accepted_at: new Date().toISOString() }).eq("id", id);
-    loadInvites();
-  };
-  const declineInvite = async (id: string) => {
-    await supabase.from("trainer_clients").delete().eq("id", id);
-    loadInvites();
-  };
 
   const latest = measurements[measurements.length - 1];
   const prev = measurements[measurements.length - 2];
