@@ -20,33 +20,68 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
+    let isMounted = true;
+
+    const loadUserRole = async (userId: string): Promise<Role> => {
+      try {
+        const { data, error } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", userId)
+          .maybeSingle();
+
+        if (error) {
+          console.error("Error loading user role:", error);
+          return null;
+        }
+        return (data?.role as Role) ?? null;
+      } catch (error) {
+        console.error("Error loading user role:", error);
+        return null;
+      }
+    };
+
+    const setupAuth = async () => {
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (!isMounted) return;
+
+        if (data.session?.user) {
+          const userRole = await loadUserRole(data.session.user.id);
+          if (!isMounted) return;
+
+          setSession(data.session);
+          setRole(userRole);
+        } else {
+          setSession(null);
+          setRole(null);
+        }
+      } catch (error) {
+        console.error("Error setting up auth:", error);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    setupAuth();
+
+    const { data: sub } = supabase.auth.onAuthStateChange(async (_event, s) => {
+      if (!isMounted) return;
+
       setSession(s);
+
       if (s?.user) {
-        // Defer role fetch to avoid blocking auth callback
-        setTimeout(() => {
-          supabase.from("user_roles").select("role").eq("user_id", s.user.id).maybeSingle().then(({ data }) => {
-            setRole((data?.role as Role) ?? null);
-          });
-        }, 0);
+        const userRole = await loadUserRole(s.user.id);
+        if (isMounted) setRole(userRole);
       } else {
         setRole(null);
       }
     });
 
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      if (data.session?.user) {
-        supabase.from("user_roles").select("role").eq("user_id", data.session.user.id).maybeSingle().then(({ data: r }) => {
-          setRole((r?.role as Role) ?? null);
-          setLoading(false);
-        });
-      } else {
-        setLoading(false);
-      }
-    });
-
-    return () => sub.subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   const signOut = async () => {

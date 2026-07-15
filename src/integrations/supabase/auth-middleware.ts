@@ -69,6 +69,32 @@ export const requireSupabaseAuth = createMiddleware({ type: 'function' }).server
       throw new Error('Unauthorized: No user ID found in token');
     }
 
+    const userId = data.claims.sub;
+
+    // Security: Verify user is not disabled
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data: profile, error: profileError } = await supabaseAdmin
+        .from("profiles")
+        .select("status, disabled_at")
+        .eq("id", userId)
+        .maybeSingle();
+
+      if (profileError) {
+        console.error("Error checking user status:", profileError);
+        throw new Error("Unauthorized: Could not verify user status");
+      }
+
+      if (profile?.status === "disabled" || profile?.disabled_at) {
+        throw new Error("Unauthorized: Tu cuenta ha sido deshabilitada");
+      }
+    } catch (error: any) {
+      if (error.message?.includes("Unauthorized")) {
+        throw error;
+      }
+      console.error("Error in status check:", error);
+    }
+
     return next({
       context: {
         supabase,
