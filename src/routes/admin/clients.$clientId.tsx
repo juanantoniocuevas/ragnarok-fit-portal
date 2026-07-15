@@ -1,11 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { GOAL_LABEL, autoRecommendations } from "@/lib/health-recommendations";
 import { MEASUREMENT_FIELDS, calcIMC } from "@/lib/measurements";
+import {
+  adminUpdateClient,
+  adminResetClientPassword,
+  adminSetClientStatus,
+  adminGetClientAuthInfo,
+} from "@/lib/admin-clients.functions";
 
 export const Route = createFileRoute("/admin/clients/$clientId")({ component: ClientDetail });
 
@@ -16,10 +23,17 @@ function ClientDetail() {
   const [phys, setPhys] = useState<any>(null);
   const [measurements, setMeasurements] = useState<any[]>([]);
   const [recs, setRecs] = useState<any[]>([]);
+  const [authInfo, setAuthInfo] = useState<{ last_sign_in_at: string | null } | null>(null);
   const [content, setContent] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState(false);
+
+  const updateFn = useServerFn(adminUpdateClient);
+  const resetPwFn = useServerFn(adminResetClientPassword);
+  const setStatusFn = useServerFn(adminSetClientStatus);
+  const authInfoFn = useServerFn(adminGetClientAuthInfo);
 
   const load = async () => {
     const [p, ph, m, r] = await Promise.all([
@@ -31,7 +45,20 @@ function ClientDetail() {
     setProfile(p.data); setPhys(ph.data); setMeasurements(m.data ?? []); setRecs(r.data ?? []);
     setLoading(false);
   };
-  useEffect(() => { load(); }, [clientId]);
+
+  useEffect(() => {
+    load();
+    authInfoFn({ data: { clientId } }).then(setAuthInfo).catch(() => {});
+    const ch = supabase
+      .channel(`client-${clientId}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "profiles", filter: `id=eq.${clientId}` }, load)
+      .on("postgres_changes", { event: "*", schema: "public", table: "physical_profiles", filter: `user_id=eq.${clientId}` }, load)
+      .on("postgres_changes", { event: "*", schema: "public", table: "measurements", filter: `user_id=eq.${clientId}` }, load)
+      .on("postgres_changes", { event: "*", schema: "public", table: "recommendations", filter: `client_id=eq.${clientId}` }, load)
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clientId]);
 
   const latest = measurements[measurements.length - 1];
   const prev = measurements[measurements.length - 2];
@@ -69,44 +96,96 @@ function ClientDetail() {
     load();
   };
 
+  const resetPassword = async () => {
+    if (!confirm("¿Generar una nueva contraseña temporal para este cliente?")) return;
+    try {
+      const res = await resetPwFn({ data: { clientId } });
+      toast.success(`Nueva contraseña temporal: ${res.tempPassword}`, { duration: 25000 });
+    } catch (e: any) { toast.error(e.message); }
+  };
+
+  const toggleStatus = async () => {
+    if (!profile) return;
+    const next = profile.status === "disabled" ? "active" : "disabled";
+    if (!confirm(`¿${next === "disabled" ? "Deshabilitar" : "Reactivar"} esta cuenta?`)) return;
+    try {
+      await setStatusFn({ data: { clientId, status: next } });
+      toast.success("Estado actualizado");
+      load();
+    } catch (e: any) { toast.error(e.message); }
+  };
+
   if (loading) return <p className="text-muted-foreground">Cargando...</p>;
-  if (!profile) return <p className="text-muted-foreground">Cliente no encontrado o no asignado a ti.</p>;
+  if (!profile) return <p className="text-muted-foreground">Cliente no encontrado.</p>;
 
   return (
     <div className="space-y-8">
       <div>
         <Link to="/admin/clients" className="text-sm text-muted-foreground hover:text-gold">← Volver</Link>
-        <h1 className="mt-2 font-display text-3xl font-bold">{profile.full_name}</h1>
-        <p className="text-muted-foreground">{profile.email}</p>
       </div>
 
+      {/* SECCIÓN 1 — Resumen general */}
       <section className="surface-card p-6">
-        <h2 className="mb-4 font-display text-xl">Perfil físico</h2>
-        {phys ? (
-          <dl className="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
-            <Info label="Edad" value={phys.age ? `${phys.age} años` : "—"} />
-            <Info label="Sexo" value={phys.sex === "male" ? "Hombre" : phys.sex === "female" ? "Mujer" : "—"} />
-            <Info label="Estatura" value={phys.height_cm ? `${phys.height_cm} cm` : "—"} />
-            <Info label="Objetivo" value={GOAL_LABEL[phys.goal] ?? "—"} />
-          </dl>
-        ) : <p className="text-muted-foreground">El cliente aún no ha completado su perfil físico.</p>}
+        <div className="flex flex-wrap items-start gap-6">
+          {profile.avatar_url ? (
+            <img src={profile.avatar_url} alt="" className="h-24 w-24 rounded-full object-cover" />
+          ) : (
+            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-background text-3xl font-display text-gold">
+              {profile.full_name?.[0]?.toUpperCase() ?? "?"}
+            </div>
+          )}
+          <div className="flex-1 space-y-1">
+            <h1 className="font-display text-3xl font-bold">{profile.full_name}</h1>
+            <p className="text-muted-foreground">{profile.email}</p>
+            {profile.phone && <p className="text-sm text-muted-foreground">{profile.phone}</p>}
+            <div className="mt-2">
+              {profile.status === "disabled"
+                ? <span className="rounded bg-destructive/20 px-2 py-0.5 text-xs text-destructive">Cuenta deshabilitada</span>
+                : <span className="rounded bg-vitality/20 px-2 py-0.5 text-xs text-vitality">Cuenta activa</span>}
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button onClick={() => setEditing(true)} className="btn-secondary text-sm">Editar datos</button>
+            <button onClick={resetPassword} className="btn-secondary text-sm">Restablecer contraseña</button>
+            <button onClick={toggleStatus} className="btn-secondary text-sm">
+              {profile.status === "disabled" ? "Reactivar" : "Deshabilitar"}
+            </button>
+          </div>
+        </div>
+
+        <dl className="mt-6 grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
+          <Info label="Edad" value={phys?.age ? `${phys.age} años` : "—"} />
+          <Info label="Sexo" value={phys?.sex === "male" ? "Hombre" : phys?.sex === "female" ? "Mujer" : "—"} />
+          <Info label="Peso actual" value={latest?.weight_kg != null ? `${latest.weight_kg} kg` : "—"} />
+          <Info label="Estatura" value={latest?.height_cm ? `${latest.height_cm} cm` : phys?.height_cm ? `${phys.height_cm} cm` : "—"} />
+          <Info label="Objetivo" value={GOAL_LABEL[phys?.goal] ?? "—"} />
+          <Info label="IMC" value={latest ? (calcIMC(latest.weight_kg, latest.height_cm) ?? "—") : "—"} />
+          <Info label="Cuenta creada" value={new Date(profile.created_at).toLocaleDateString("es-CL")} />
+          <Info label="Último acceso" value={authInfo?.last_sign_in_at ? new Date(authInfo.last_sign_in_at).toLocaleString("es-CL") : "—"} />
+        </dl>
       </section>
 
-      {latest && (
-        <section>
-          <h2 className="mb-4 font-display text-xl">Última evaluación</h2>
-          <div className="grid gap-3 md:grid-cols-3 lg:grid-cols-4">
-            {MEASUREMENT_FIELDS.map((f) => (
-              <Stat key={f.key} label={f.short} value={latest[f.key] != null ? `${latest[f.key]} ${f.unit}` : "—"} />
-            ))}
-            <Stat label="IMC" value={calcIMC(latest.weight_kg, latest.height_cm) ?? "—"} />
-          </div>
-        </section>
+      {editing && (
+        <EditProfileModal
+          profile={profile}
+          onClose={() => setEditing(false)}
+          onSave={async (patch) => {
+            try {
+              await updateFn({ data: { clientId, ...patch } });
+              toast.success("Datos actualizados");
+              setEditing(false);
+              load();
+            } catch (e: any) { toast.error(e.message); }
+          }}
+        />
       )}
 
-      {measurements.length >= 2 ? (
-        <section>
-          <h2 className="mb-4 font-display text-xl">Evolución</h2>
+      {/* SECCIÓN 2 — Progreso */}
+      <section>
+        <h2 className="mb-4 font-display text-2xl">Progreso</h2>
+        {measurements.length < 2 ? (
+          <p className="surface-card p-6 text-muted-foreground">Se requieren al menos dos evaluaciones para visualizar la evolución.</p>
+        ) : (
           <div className="grid gap-6 md:grid-cols-2">
             {MEASUREMENT_FIELDS.map((f) => (
               <div key={f.key} className="surface-card p-6">
@@ -125,44 +204,45 @@ function ClientDetail() {
               </div>
             ))}
           </div>
-        </section>
-      ) : (
-        <p className="surface-card p-6 text-muted-foreground">Se requieren más evaluaciones para visualizar la evolución.</p>
-      )}
+        )}
 
-      <section className="surface-card overflow-hidden">
-        <h2 className="border-b border-border p-6 font-display text-xl">Historial de evaluaciones</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-background/40 text-left text-muted-foreground">
-              <tr>
-                <th className="p-3">Fecha</th>
-                {MEASUREMENT_FIELDS.map((f) => <th key={f.key} className="p-3">{f.short}</th>)}
-                <th className="p-3">IMC</th>
-              </tr>
-            </thead>
-            <tbody>
-              {measurements.slice().reverse().map((m) => (
-                <tr key={m.id} className="border-t border-border">
-                  <td className="p-3">{new Date(m.created_at).toLocaleString("es-CL")}</td>
-                  {MEASUREMENT_FIELDS.map((f) => <td key={f.key} className="p-3">{m[f.key] ?? "—"}</td>)}
-                  <td className="p-3">{calcIMC(m.weight_kg, m.height_cm) ?? "—"}</td>
-                </tr>
-              ))}
-              {measurements.length === 0 && (
-                <tr><td colSpan={MEASUREMENT_FIELDS.length + 2} className="p-8 text-center text-muted-foreground">Sin evaluaciones aún.</td></tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+        {latest && (
+          <div className="surface-card mt-6 p-6">
+            <h3 className="mb-3 font-display text-lg">Recomendaciones automáticas del sistema</h3>
+            <ul className="list-disc space-y-2 pl-5 text-sm">{autoRecs.map((r, i) => <li key={i}>{r}</li>)}</ul>
+          </div>
+        )}
       </section>
 
-      {latest && (
-        <section className="surface-card p-6">
-          <h2 className="mb-4 font-display text-xl">Recomendaciones automáticas del sistema</h2>
-          <ul className="list-disc space-y-2 pl-5 text-sm">{autoRecs.map((r, i) => <li key={i}>{r}</li>)}</ul>
-        </section>
-      )}
+      {/* SECCIÓN 3 — Historial */}
+      <section>
+        <h2 className="mb-4 font-display text-2xl">Historial de evaluaciones</h2>
+        <div className="surface-card overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-background/40 text-left text-muted-foreground">
+                <tr>
+                  <th className="p-3">Fecha</th>
+                  {MEASUREMENT_FIELDS.map((f) => <th key={f.key} className="p-3">{f.short}</th>)}
+                  <th className="p-3">IMC</th>
+                </tr>
+              </thead>
+              <tbody>
+                {measurements.slice().reverse().map((m) => (
+                  <tr key={m.id} className="border-t border-border">
+                    <td className="p-3">{new Date(m.created_at).toLocaleString("es-CL")}</td>
+                    {MEASUREMENT_FIELDS.map((f) => <td key={f.key} className="p-3">{m[f.key] ?? "—"}</td>)}
+                    <td className="p-3">{calcIMC(m.weight_kg, m.height_cm) ?? "—"}</td>
+                  </tr>
+                ))}
+                {measurements.length === 0 && (
+                  <tr><td colSpan={MEASUREMENT_FIELDS.length + 2} className="p-8 text-center text-muted-foreground">Sin evaluaciones aún.</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
       <section className="surface-card p-6">
         <h2 className="mb-4 font-display text-xl">{editingId ? "Editar recomendación" : "Nueva recomendación"}</h2>
@@ -201,6 +281,40 @@ function ClientDetail() {
 function Info({ label, value }: { label: string; value: any }) {
   return <div><dt className="text-xs uppercase tracking-wide text-muted-foreground">{label}</dt><dd className="mt-1 font-medium">{value}</dd></div>;
 }
-function Stat({ label, value }: { label: string; value: any }) {
-  return <div className="surface-card p-4"><p className="text-xs text-muted-foreground">{label}</p><p className="mt-1 font-display text-2xl text-gold">{value}</p></div>;
+
+function EditProfileModal({ profile, onClose, onSave }: { profile: any; onClose: () => void; onSave: (patch: { fullName?: string; email?: string; phone?: string | null }) => Promise<void> }) {
+  const [fullName, setFullName] = useState(profile.full_name ?? "");
+  const [email, setEmail] = useState(profile.email ?? "");
+  const [phone, setPhone] = useState(profile.phone ?? "");
+  const [saving, setSaving] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    await onSave({ fullName, email, phone: phone || null });
+    setSaving(false);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={onClose}>
+      <div className="surface-card w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+        <h2 className="font-display text-2xl font-bold">Editar cliente</h2>
+        <form onSubmit={submit} className="mt-4 space-y-3">
+          <label className="block"><span className="mb-1 block text-sm font-medium">Nombre</span>
+            <input required value={fullName} onChange={(e) => setFullName(e.target.value)} className="input" />
+          </label>
+          <label className="block"><span className="mb-1 block text-sm font-medium">Correo</span>
+            <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="input" />
+          </label>
+          <label className="block"><span className="mb-1 block text-sm font-medium">Teléfono</span>
+            <input value={phone} onChange={(e) => setPhone(e.target.value)} className="input" />
+          </label>
+          <div className="flex gap-2 pt-2">
+            <button disabled={saving} className="btn-primary flex-1">{saving ? "Guardando..." : "Guardar"}</button>
+            <button type="button" onClick={onClose} className="btn-secondary">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }
