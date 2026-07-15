@@ -17,8 +17,8 @@ function Page() {
   useEffect(() => {
     if (!user) return;
     (async () => {
-      const { data: links } = await supabase.from("trainer_clients").select("client_id").eq("trainer_id", user.id);
-      const ids = (links ?? []).map((l: any) => l.client_id);
+      const { data: roleRows } = await supabase.from("user_roles").select("user_id").eq("role", "client");
+      const ids = (roleRows ?? []).map((r: any) => r.user_id);
       if (ids.length === 0) return setClients([]);
       const { data } = await supabase.from("profiles").select("id, full_name").in("id", ids).order("full_name");
       setClients(data ?? []);

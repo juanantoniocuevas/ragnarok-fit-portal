@@ -1,114 +1,149 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/lib/auth-context";
+import { adminCreateClient, adminSetClientStatus } from "@/lib/admin-clients.functions";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/clients")({ component: Clients });
 
 function Clients() {
-  const { user } = useAuth();
   const [rows, setRows] = useState<any[]>([]);
   const [search, setSearch] = useState("");
-  const [emailToAssign, setEmailToAssign] = useState("");
-  const [assigning, setAssigning] = useState(false);
+  const [showCreate, setShowCreate] = useState(false);
+  const createFn = useServerFn(adminCreateClient);
+  const setStatusFn = useServerFn(adminSetClientStatus);
 
   const load = async () => {
-    if (!user) return;
-    const { data: links } = await supabase
-      .from("trainer_clients")
-      .select("client_id, created_at, accepted_at")
-      .eq("trainer_id", user.id);
-    const ids = (links ?? []).map((l: any) => l.client_id);
+    const { data: roleRows } = await supabase.from("user_roles").select("user_id").eq("role", "client");
+    const ids = (roleRows ?? []).map((r: any) => r.user_id);
     if (ids.length === 0) return setRows([]);
-    const { data: profiles } = await supabase.from("profiles").select("*").in("id", ids);
-    const byId = new Map((profiles ?? []).map((p: any) => [p.id, p]));
-    setRows((links ?? []).map((l: any) => ({ ...byId.get(l.client_id), accepted_at: l.accepted_at })));
+    const { data: profiles } = await supabase.from("profiles").select("*").in("id", ids).order("full_name");
+    setRows(profiles ?? []);
   };
-  useEffect(() => { load(); }, [user]);
 
-  const assign = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return;
-    setAssigning(true);
-    const email = emailToAssign.trim().toLowerCase();
-    const { data: prof } = await supabase.from("profiles").select("id, full_name").eq("email", email).maybeSingle();
-    if (!prof) {
-      setAssigning(false);
-      return toast.error("No existe un usuario con ese correo. Pídele registrarse primero.");
-    }
-    const { error } = await supabase
-      .from("trainer_clients")
-      .insert({ trainer_id: user.id, client_id: prof.id, requested_by: user.id });
-    setAssigning(false);
-    if (error) {
-      if (error.code === "23505") return toast.error("Ya enviaste una invitación a este cliente.");
-      return toast.error(error.message);
-    }
-    toast.success(`Invitación enviada a ${prof.full_name}. Debe aceptarla desde su panel.`);
-    setEmailToAssign("");
+  useEffect(() => {
     load();
+    const ch = supabase
+      .channel("admin-clients")
+      .on("postgres_changes", { event: "*", schema: "public", table: "profiles" }, load)
+      .on("postgres_changes", { event: "*", schema: "public", table: "user_roles" }, load)
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, []);
+
+  const toggleStatus = async (r: any) => {
+    const next = r.status === "disabled" ? "active" : "disabled";
+    if (!confirm(`¿${next === "disabled" ? "Deshabilitar" : "Reactivar"} a ${r.full_name}?`)) return;
+    try {
+      await setStatusFn({ data: { clientId: r.id, status: next } });
+      toast.success("Estado actualizado");
+      load();
+    } catch (e: any) { toast.error(e.message); }
   };
 
-  const unassign = async (clientId: string) => {
-    if (!user) return;
-    if (!confirm("¿Quitar este cliente de tu lista?")) return;
-    await supabase.from("trainer_clients").delete().eq("trainer_id", user.id).eq("client_id", clientId);
-    toast.success("Cliente removido");
-    load();
-  };
-
-  const filtered = rows.filter((r) => r.full_name?.toLowerCase().includes(search.toLowerCase()) || r.email?.toLowerCase().includes(search.toLowerCase()));
+  const filtered = rows.filter((r) =>
+    r.full_name?.toLowerCase().includes(search.toLowerCase()) ||
+    r.email?.toLowerCase().includes(search.toLowerCase()),
+  );
 
   return (
     <div className="space-y-6">
-      <h1 className="font-display text-3xl font-bold">Mis Clientes</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="font-display text-3xl font-bold">Clientes</h1>
+        <button onClick={() => setShowCreate(true)} className="btn-primary">+ Crear cliente</button>
+      </div>
 
-      <form onSubmit={assign} className="surface-card flex flex-col gap-3 p-6 sm:flex-row">
-        <input required type="email" placeholder="Correo del cliente a invitar" value={emailToAssign}
-          onChange={(e) => setEmailToAssign(e.target.value)}
-          className="h-12 flex-1 rounded-md border border-border bg-input/30 px-3 outline-none focus:border-gold" />
-        <button disabled={assigning} className="btn-primary">{assigning ? "Enviando..." : "Enviar invitación"}</button>
-      </form>
-      <p className="text-xs text-muted-foreground -mt-3">El cliente debe aceptar la invitación desde su panel antes de que puedas ver sus datos.</p>
-
-      <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar en mis clientes..."
+      <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar por nombre o correo..."
         className="h-12 w-full rounded-md border border-border bg-input/30 px-3 outline-none focus:border-gold" />
 
       <div className="surface-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-background/40 text-left text-muted-foreground">
-              <tr><th className="p-4">Nombre</th><th className="p-4">Correo</th><th className="p-4">Estado</th><th className="p-4"></th></tr>
+              <tr>
+                <th className="p-4">Nombre</th>
+                <th className="p-4">Correo</th>
+                <th className="p-4">Estado</th>
+                <th className="p-4">Creado</th>
+                <th className="p-4"></th>
+              </tr>
             </thead>
             <tbody>
               {filtered.map((r) => (
                 <tr key={r.id} className="border-t border-border">
                   <td className="p-4 font-medium">
-                    {r.accepted_at ? (
-                      <Link to="/admin/clients/$clientId" params={{ clientId: r.id }} className="text-gold hover:underline">
-                        {r.full_name}
-                      </Link>
-                    ) : (
-                      <span>{r.full_name}</span>
-                    )}
+                    <Link to="/admin/clients/$clientId" params={{ clientId: r.id }} className="text-gold hover:underline">
+                      {r.full_name}
+                    </Link>
                   </td>
                   <td className="p-4 text-muted-foreground">{r.email}</td>
                   <td className="p-4">
-                    {r.accepted_at
-                      ? <span className="text-vitality">Aceptado</span>
-                      : <span className="text-muted-foreground italic">Pendiente</span>}
+                    {r.status === "disabled"
+                      ? <span className="text-destructive">Deshabilitado</span>
+                      : <span className="text-vitality">Activo</span>}
                   </td>
+                  <td className="p-4 text-muted-foreground">{new Date(r.created_at).toLocaleDateString("es-CL")}</td>
                   <td className="p-4 text-right">
-                    <button onClick={() => unassign(r.id)} className="text-sm text-destructive hover:underline">Quitar</button>
+                    <button onClick={() => toggleStatus(r)} className="text-sm text-muted-foreground hover:text-gold">
+                      {r.status === "disabled" ? "Reactivar" : "Deshabilitar"}
+                    </button>
                   </td>
                 </tr>
               ))}
-              {filtered.length === 0 && <tr><td colSpan={4} className="p-8 text-center text-muted-foreground">Aún no tienes clientes asignados.</td></tr>}
+              {filtered.length === 0 && <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">Sin clientes.</td></tr>}
             </tbody>
           </table>
         </div>
       </div>
+
+      {showCreate && <CreateClientModal onClose={() => setShowCreate(false)} onCreated={() => { load(); setShowCreate(false); }} createFn={createFn} />}
     </div>
+  );
+}
+
+function CreateClientModal({ onClose, onCreated, createFn }: { onClose: () => void; onCreated: () => void; createFn: any }) {
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const res = await createFn({ data: { fullName, email, phone: phone || undefined, password: password || undefined } });
+      toast.success(`Cliente creado. Contraseña temporal: ${res.tempPassword}`, { duration: 20000 });
+      onCreated();
+    } catch (e: any) { toast.error(e.message); }
+    finally { setSaving(false); }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={onClose}>
+      <div className="surface-card w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+        <h2 className="font-display text-2xl font-bold">Nuevo cliente</h2>
+        <form onSubmit={submit} className="mt-4 space-y-3">
+          <Field label="Nombre completo"><input required value={fullName} onChange={(e) => setFullName(e.target.value)} className="input" /></Field>
+          <Field label="Correo"><input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="input" /></Field>
+          <Field label="Teléfono (opcional)"><input value={phone} onChange={(e) => setPhone(e.target.value)} className="input" /></Field>
+          <Field label="Contraseña temporal (opcional)"><input value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Se genera automáticamente si se deja vacío" className="input" /></Field>
+          <div className="flex gap-2 pt-2">
+            <button disabled={saving} className="btn-primary flex-1">{saving ? "Creando..." : "Crear cliente"}</button>
+            <button type="button" onClick={onClose} className="btn-secondary">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function Field({ label, children }: { label: string; children: any }) {
+  return (
+    <label className="block">
+      <span className="mb-1 block text-sm font-medium">{label}</span>
+      {children}
+    </label>
   );
 }
