@@ -44,18 +44,8 @@ function DashHome() {
         <p className="text-muted-foreground">Aquí está tu resumen actual.</p>
       </div>
 
-      {invites.map((inv) => (
-        <div key={inv.id} className="surface-card surface-card-active p-6">
-          <p className="font-display text-lg">Invitación de preparador</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            <strong className="text-foreground">{inv.trainer?.full_name ?? inv.trainer?.email}</strong> te invita a ser su cliente.
-          </p>
-          <div className="mt-4 flex gap-3">
-            <button onClick={() => acceptInvite(inv.id)} className="btn-primary">Aceptar</button>
-            <button onClick={() => declineInvite(inv.id)} className="btn-secondary">Rechazar</button>
-          </div>
-        </div>
-      ))}
+
+
 
       {!phys && (
         <div className="surface-card surface-card-active p-6">
