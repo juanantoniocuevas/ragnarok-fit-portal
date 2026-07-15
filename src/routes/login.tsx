@@ -29,11 +29,8 @@ function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
     setSubmitting(false);
     if (error) {
-      if (error.message.toLowerCase().includes("email not confirmed")) {
-        toast.error("Debes verificar tu correo antes de ingresar.");
-      } else {
-        toast.error("Credenciales incorrectas");
-      }
+      // Security: Use generic message to prevent email enumeration
+      toast.error("Email o contraseña incorrectos");
       return;
     }
     toast.success("Bienvenido");

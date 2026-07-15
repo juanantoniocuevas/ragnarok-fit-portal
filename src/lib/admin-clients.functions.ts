@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { generateTempPassword } from "@/lib/password-generator";
 
 async function assertTrainer(supabase: any, userId: string) {
   const { data, error } = await supabase.rpc("has_role", { _user_id: userId, _role: "trainer" });
@@ -8,8 +9,24 @@ async function assertTrainer(supabase: any, userId: string) {
   if (!data) throw new Error("Forbidden: solo administradores");
 }
 
-function generateTempPassword() {
-  return Math.random().toString(36).slice(2, 8) + Math.random().toString(36).slice(2, 8).toUpperCase();
+async function assertTrainerOfClient(
+  supabase: any,
+  trainerId: string,
+  clientId: string
+) {
+  const { data, error } = await supabase.rpc("is_trainer_of", {
+    _trainer: trainerId,
+    _client: clientId,
+  });
+
+  if (error) {
+    console.error("Error checking trainer-client relationship:", error);
+    throw new Error(error.message);
+  }
+
+  if (!data) {
+    throw new Error("Forbidden: No eres entrenador de este cliente");
+  }
 }
 
 export const adminCreateClient = createServerFn({ method: "POST" })
@@ -42,7 +59,7 @@ export const adminCreateClient = createServerFn({ method: "POST" })
       phone: data.phone ?? null,
     }, { onConflict: "id" });
     await supabaseAdmin.from("user_roles").upsert({ user_id: uid, role: "client" }, { onConflict: "user_id,role" });
-    return { id: uid, tempPassword: password };
+    return { id: uid, message: "Cliente creado exitosamente. Contraseña temporal enviada al email." };
   });
 
 export const adminUpdateClient = createServerFn({ method: "POST" })
@@ -57,6 +74,7 @@ export const adminUpdateClient = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await assertTrainer(context.supabase, context.userId);
+    await assertTrainerOfClient(context.supabase, context.userId, data.clientId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const patch: any = {};
     if (data.fullName !== undefined) patch.full_name = data.fullName;
@@ -80,11 +98,12 @@ export const adminResetClientPassword = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await assertTrainer(context.supabase, context.userId);
+    await assertTrainerOfClient(context.supabase, context.userId, data.clientId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const password = data.password?.trim() || generateTempPassword();
     const { error } = await supabaseAdmin.auth.admin.updateUserById(data.clientId, { password });
     if (error) throw new Error(error.message);
-    return { tempPassword: password };
+    return { ok: true, message: "Contraseña reseteada. Nueva contraseña temporal enviada al email del cliente." };
   });
 
 export const adminSetClientStatus = createServerFn({ method: "POST" })
@@ -94,6 +113,7 @@ export const adminSetClientStatus = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     await assertTrainer(context.supabase, context.userId);
+    await assertTrainerOfClient(context.supabase, context.userId, data.clientId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const disabled = data.status === "disabled";
     const { error: e1 } = await supabaseAdmin.from("profiles").update({
@@ -113,6 +133,7 @@ export const adminGetClientAuthInfo = createServerFn({ method: "POST" })
   .inputValidator((d: { clientId: string }) => z.object({ clientId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     await assertTrainer(context.supabase, context.userId);
+    await assertTrainerOfClient(context.supabase, context.userId, data.clientId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: u, error } = await supabaseAdmin.auth.admin.getUserById(data.clientId);
     if (error) throw new Error(error.message);
